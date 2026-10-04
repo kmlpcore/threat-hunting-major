@@ -1,0 +1,22 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "message": {
+      "title": "Message",
+      "type": "string"
+    },
+    "recorded_at": {
+      "format": "date-time",
+      "title": "Recorded At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "message",
+    "recorded_at"
+  ],
+  "title": "PingRecorded",
+  "type": "object",
+  "x-event-type": "PingRecorded",
+  "x-event-version": 1
+}

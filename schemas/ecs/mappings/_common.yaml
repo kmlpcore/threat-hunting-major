@@ -1,0 +1,4 @@
+# Shared normaliser settings.
+# Addresses in these ranges are "internal": they drive network.direction and
+# whether host.name is resolved from the DHCP lease table.
+internal_networks: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]

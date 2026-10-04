@@ -1,0 +1,149 @@
+# ECS subset used by the engine (ECS 8.11). This file is the single source of
+# truth for the raw Parquet schema, the ECS validator and (later) the capability
+# catalog used by the coverage planner.
+#
+# types: date | keyword | text | ip | long | float | boolean ; suffix [] = array
+ecs_version: "8.11.0"
+schema_version: 1
+
+required: ["@timestamp", event.id, event.kind, event.category, event.type, event.dataset, event.module,
+           ecs.version, labels.ingest_partition, labels.ingest_batch, labels.ecs_mapping_version]
+
+fields:
+  "@timestamp": date
+  ecs.version: keyword
+
+  event.id: keyword
+  event.kind: keyword
+  event.category: keyword[]
+  event.type: keyword[]
+  event.action: keyword
+  event.outcome: keyword
+  event.code: keyword
+  event.dataset: keyword
+  event.module: keyword
+  event.provider: keyword
+  event.created: date
+  event.ingested: date
+  event.start: date
+  event.end: date
+  event.duration: long
+  event.original: text
+
+  observer.name: keyword
+  observer.type: keyword
+
+  host.name: keyword
+  host.id: keyword
+  host.ip: ip[]
+  host.mac: keyword[]
+  host.cpu.usage: float
+  host.network.ingress.bytes: long
+  host.network.egress.bytes: long
+  system.memory.actual.used.pct: float
+
+  user.id: keyword
+  user.name: keyword
+  user.domain: keyword
+  user.target.name: keyword
+  user.target.id: keyword
+  group.name: keyword
+  group.id: keyword
+
+  source.ip: ip
+  source.port: long
+  source.bytes: long
+  destination.ip: ip
+  destination.port: long
+  destination.bytes: long
+  destination.domain: keyword
+  network.transport: keyword
+  network.protocol: keyword
+  network.direction: keyword
+  network.bytes: long
+  network.community_id: keyword
+
+  process.entity_id: keyword
+  process.pid: long
+  process.executable: keyword
+  process.name: keyword
+  process.command_line: text
+  process.hash.md5: keyword
+  process.hash.sha256: keyword
+  process.parent.pid: long
+  process.parent.executable: keyword
+  process.parent.name: keyword
+  process.parent.command_line: text
+
+  file.path: keyword
+  file.name: keyword
+  file.hash.sha256: keyword
+
+  dns.question.name: keyword
+  dns.question.type: keyword
+  dns.question.registered_domain: keyword
+  dns.question.subdomain: keyword
+  dns.response_code: keyword
+  dns.resolved_ip: ip[]
+
+  url.full: keyword
+  url.scheme: keyword
+  url.domain: keyword
+  url.port: long
+  url.path: keyword
+  url.query: keyword
+  url.registered_domain: keyword
+  http.request.method: keyword
+  http.request.bytes: long
+  http.response.status_code: long
+  http.response.bytes: long
+  http.response.mime_type: keyword
+  user_agent.original: keyword
+
+  cloud.provider: keyword
+  cloud.region: keyword
+  cloud.account.id: keyword
+  cloud.service.name: keyword
+  error.code: keyword
+  error.message: text
+
+  winlog.logon.type: keyword
+  winlog.event_data.Status: keyword
+  winlog.event_data.SubStatus: keyword
+  winlog.event_data.AuthenticationPackageName: keyword
+  winlog.event_data.PrivilegeList: keyword
+  winlog.record_id: long
+
+  related.ip: ip[]
+  related.user: keyword[]
+  related.hosts: keyword[]
+  related.hash: keyword[]
+
+  labels.ingest_partition: keyword
+  labels.ingest_batch: keyword
+  labels.ecs_mapping_version: keyword
+  labels.user_resolution: keyword   # sid | alias | unresolved | none
+  labels.host_resolution: keyword   # native | lease | static | unresolved | none
+
+# Allowed values (ECS categorisation fields).
+allowed:
+  event.kind: [alert, enrichment, event, metric, state, pipeline_error, signal]
+  event.outcome: [failure, success, unknown]
+  network.direction: [ingress, egress, inbound, outbound, internal, external, unknown]
+  event.category: [api, authentication, configuration, database, driver, email, file, host, iam,
+                   intrusion_detection, library, malware, network, package, process, registry, session,
+                   threat, vulnerability, web]
+  event.type: [access, admin, allowed, change, connection, creation, deletion, denied, end, error, group,
+               indicator, info, installation, protocol, start, user]
+
+# ECS "expected event types" per category (subset); validator checks every pair.
+expected_types:
+  api: [access, admin, allowed, change, creation, deletion, denied, end, info, start, user]
+  authentication: [start, end, info]
+  configuration: [access, change, creation, deletion, info]
+  host: [access, change, end, info, start]
+  iam: [admin, change, creation, deletion, group, info, user]
+  network: [access, allowed, connection, denied, end, info, protocol, start]
+  process: [access, change, end, info, start]
+  session: [start, end, info]
+  web: [access, error, info]

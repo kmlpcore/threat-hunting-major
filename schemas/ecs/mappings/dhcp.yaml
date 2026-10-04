@@ -1,0 +1,28 @@
+# Windows DHCP Server audit log (CSV lines, header removed).
+# Assign/renew/release rows also feed the time-bounded IP -> host lease table.
+source: dhcp
+version: "1.0.0"
+dataset: microsoft.dhcp
+format: csv
+parse:
+  columns: [ID, Date, Time, Description, IPAddress, HostName, MACAddress, UserName, TransactionID, QResult]
+timestamp: {template: "{Date} {Time}", format: "%m/%d/%y %H:%M:%S"}
+clock_skew_seconds: 0
+static:
+  event.kind: event
+  event.module: microsoft_dhcp
+  event.category: [network]
+  event.outcome: success
+  observer.type: dhcp-server
+  observer.name: dc01
+fields:
+  event.code: ID
+  event.action: {from: ID, map: {10: dhcp-assign, 11: dhcp-renew, 12: dhcp-release}, map_default: dhcp-other}
+  event.type: {from: ID, map: {10: [start], 11: [info], 12: [end]}, default: [info]}
+  host.ip: IPAddress
+  host.mac: {from: MACAddress, transform: mac}
+entities:
+  host: {name: HostName}
+options:
+  produces_leases: true
+  lease_seconds: 691200   # 8 days, the Windows DHCP default

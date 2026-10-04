@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Threat Hunting Engine</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%235b9dff'/><text x='16' y='22' font-size='16' text-anchor='middle' font-family='Arial' font-weight='800' fill='%230b1020'>TH</text></svg>">
+</head>
+<body>
+  <aside class="side">
+    <div class="brand">
+      <div class="brand-mark">TH</div>
+      <div><b>Threat Hunting Engine</b><span>artefact-based · retrospective</span></div>
+    </div>
+    <nav class="nav" id="nav">
+      <a href="#overview">Overview</a>
+      <a href="#hunt">Hunt <span class="tag">M3</span></a>
+      <a href="#partitions">Partitions <span class="tag">M1·M4</span></a>
+      <a href="#storage">Storage <span class="tag">M2</span></a>
+      <a href="#summaries">Summaries <span class="tag">M2</span></a>
+      <a href="#artefacts">Artefacts <span class="tag">M4</span></a>
+      <a href="#sealing">Sealing &amp; archive <span class="tag">M4</span></a>
+      <a href="#activity">Activity &amp; commands <span class="tag">M0</span></a>
+    </nav>
+    <div class="side-foot">
+      <a href="http://localhost:8001/docs" target="_blank">Query API ↗</a>
+      <a href="http://localhost:8000/docs" target="_blank">Command API ↗</a>
+      <a href="http://localhost:9001" target="_blank">MinIO console ↗</a>
+      <a href="http://localhost:8181/ui/" target="_blank">Iceberg catalog ↗</a>
+    </div>
+  </aside>
+
+  <header class="top">
+    <div>
+      <h1 id="title">Overview</h1>
+      <div class="sub" id="subtitle"></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="live"><span class="dot" id="live-dot"></span><span id="live-text">connecting…</span></div>
+  </header>
+
+  <main><div class="page" id="page"></div></main>
+  <div class="drawer" id="drawer"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

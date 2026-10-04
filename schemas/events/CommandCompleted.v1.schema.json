@@ -1,0 +1,32 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {
+      "title": "Command Id",
+      "type": "string"
+    },
+    "command_type": {
+      "title": "Command Type",
+      "type": "string"
+    },
+    "attempts": {
+      "title": "Attempts",
+      "type": "integer"
+    },
+    "detail": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Detail",
+      "type": "object"
+    }
+  },
+  "required": [
+    "command_id",
+    "command_type",
+    "attempts"
+  ],
+  "title": "CommandCompleted",
+  "type": "object",
+  "x-event-type": "CommandCompleted",
+  "x-event-version": 1
+}

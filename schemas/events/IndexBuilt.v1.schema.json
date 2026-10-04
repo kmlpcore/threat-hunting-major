@@ -1,0 +1,54 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "title": "Source",
+      "type": "string"
+    },
+    "day": {
+      "title": "Day",
+      "type": "string"
+    },
+    "generation": {
+      "title": "Generation",
+      "type": "string"
+    },
+    "index_version": {
+      "title": "Index Version",
+      "type": "string"
+    },
+    "docs": {
+      "title": "Docs",
+      "type": "integer"
+    },
+    "index_bytes": {
+      "title": "Index Bytes",
+      "type": "integer"
+    },
+    "bloom_filters": {
+      "title": "Bloom Filters",
+      "type": "integer"
+    },
+    "partitions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Partitions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "source",
+    "day",
+    "generation",
+    "index_version",
+    "docs",
+    "index_bytes",
+    "bloom_filters",
+    "partitions"
+  ],
+  "title": "IndexBuilt",
+  "type": "object",
+  "x-event-type": "IndexBuilt",
+  "x-event-version": 1
+}

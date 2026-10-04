@@ -1,0 +1,32 @@
+# Zeek dns.log (JSON). Same sensor as conn.log, same clock correction.
+source: zeek_dns
+version: "1.0.0"
+dataset: zeek.dns
+format: json
+timestamp: {from: ts, format: epoch}
+clock_skew_seconds: 2.5
+static:
+  event.kind: event
+  event.module: zeek
+  event.category: [network]
+  event.type: [protocol, info]
+  event.action: dns-query
+  network.protocol: dns
+  observer.type: sensor
+  observer.name: zeek-core-01
+fields:
+  source.ip: id.orig_h
+  source.port: id.orig_p
+  destination.ip: id.resp_h
+  destination.port: id.resp_p
+  network.transport: proto
+  dns.question.name: {from: query, transform: lower}
+  dns.question.type: qtype_name
+  dns.response_code: rcode_name
+  dns.resolved_ip: {from: answers, transform: ips_only}
+  event.outcome: {from: rcode_name, map: {NOERROR: success}, map_default: failure}
+entities:
+  host: {ip_fields: [source.ip]}
+derive:
+  - {fn: dns_parts, from: dns.question.name}
+  - {fn: network_direction}

@@ -1,0 +1,61 @@
+# Drop / aggregate policy (plan.md section 3.4). Versioned: every summary row
+# carries `policy_version`, and changing this version makes the orchestrator
+# rebuild summaries for every landed day (raw is never modified).
+#
+# Per source:
+#   action: aggregate      -> feeds the listed summary tables
+#           keep_raw_only  -> archived only, excluded from summaries
+#   high_value: conditions (ANY match) for copying the full ECS row into
+#               summary.high_value_events. Conditions are field -> list of values,
+#               or field -> {contains_any: [...]} for substring matches.
+version: "1.0.0"
+
+sources:
+  windows_security:
+    action: aggregate
+    tables: [auth_hourly, user_daily]
+    high_value:
+      - {event.code: ["4672", "4728", "4732", "4648"]}         # privileged logon, group changes, explicit creds
+      - {winlog.logon.type: ["RemoteInteractive"]}              # RDP
+
+  sysmon:
+    action: aggregate
+    tables: [process_daily]
+    high_value:
+      - process.name: [certutil.exe, rundll32.exe, mshta.exe, bitsadmin.exe, regsvr32.exe, wmic.exe,
+                       psexesvc.exe, PSEXESVC.exe, xmrig.exe, schtasks.exe, vssadmin.exe]
+      - process.command_line: {contains_any: [" -enc", " -Enc", " -EncodedCommand", "FromBase64String",
+                                              "DownloadString", "-urlcache", "stratum+tcp"]}
+      - process.parent.name: [WINWORD.EXE, EXCEL.EXE, OUTLOOK.EXE, POWERPNT.EXE]
+
+  zeek_conn:
+    action: aggregate
+    tables: [network_hourly]
+    high_value: []
+
+  zeek_dns:
+    action: aggregate
+    tables: [dns_daily]
+    high_value:
+      - dns.question.type: [TXT, "NULL"]
+
+  proxy:
+    action: aggregate
+    tables: [web_daily]
+    high_value:
+      - http.request.method: [POST, PUT]
+
+  cloudtrail:
+    action: aggregate
+    tables: [cloud_api_daily]
+    high_value:
+      - event.outcome: [failure]
+      - event.action: [CreateUser, AttachUserPolicy, PutBucketPolicy, CreateAccessKey, DeleteTrail, StopLogging]
+
+  host_metrics:
+    action: aggregate            # metrics are aggregated, never dropped (cryptomining, exfil volume)
+    tables: [metrics_hourly]
+    high_value: []
+
+  dhcp:
+    action: keep_raw_only        # used at ingest for IP->host leases; no analytical value of its own

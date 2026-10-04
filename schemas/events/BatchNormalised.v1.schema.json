@@ -1,0 +1,145 @@
+{
+  "$defs": {
+    "PartitionWrite": {
+      "additionalProperties": false,
+      "properties": {
+        "partition_id": {
+          "title": "Partition Id",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "date": {
+          "title": "Date",
+          "type": "string"
+        },
+        "hour": {
+          "title": "Hour",
+          "type": "string"
+        },
+        "file": {
+          "title": "File",
+          "type": "string"
+        },
+        "rows": {
+          "title": "Rows",
+          "type": "integer"
+        },
+        "bytes": {
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "min_ts": {
+          "format": "date-time",
+          "title": "Min Ts",
+          "type": "string"
+        },
+        "max_ts": {
+          "format": "date-time",
+          "title": "Max Ts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "partition_id",
+        "source",
+        "date",
+        "hour",
+        "file",
+        "rows",
+        "bytes",
+        "min_ts",
+        "max_ts"
+      ],
+      "title": "PartitionWrite",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "batch_id": {
+      "title": "Batch Id",
+      "type": "string"
+    },
+    "source": {
+      "title": "Source",
+      "type": "string"
+    },
+    "batch_uri": {
+      "title": "Batch Uri",
+      "type": "string"
+    },
+    "ecs_mapping_version": {
+      "title": "Ecs Mapping Version",
+      "type": "string"
+    },
+    "rows_in": {
+      "title": "Rows In",
+      "type": "integer"
+    },
+    "rows_out": {
+      "title": "Rows Out",
+      "type": "integer"
+    },
+    "rows_invalid": {
+      "title": "Rows Invalid",
+      "type": "integer"
+    },
+    "quarantine_uri": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Quarantine Uri"
+    },
+    "leases_recorded": {
+      "default": 0,
+      "title": "Leases Recorded",
+      "type": "integer"
+    },
+    "resolution": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "default": {},
+      "title": "Resolution",
+      "type": "object"
+    },
+    "partitions": {
+      "items": {
+        "$ref": "#/$defs/PartitionWrite"
+      },
+      "title": "Partitions",
+      "type": "array"
+    },
+    "late_partitions": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Late Partitions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "batch_id",
+    "source",
+    "batch_uri",
+    "ecs_mapping_version",
+    "rows_in",
+    "rows_out",
+    "rows_invalid",
+    "quarantine_uri",
+    "partitions"
+  ],
+  "title": "BatchNormalised",
+  "type": "object",
+  "x-event-type": "BatchNormalised",
+  "x-event-version": 1
+}

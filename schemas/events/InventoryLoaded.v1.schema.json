@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "uri": {
+      "title": "Uri",
+      "type": "string"
+    },
+    "identities": {
+      "title": "Identities",
+      "type": "integer"
+    },
+    "aliases": {
+      "title": "Aliases",
+      "type": "integer"
+    },
+    "assets": {
+      "title": "Assets",
+      "type": "integer"
+    },
+    "static_leases": {
+      "title": "Static Leases",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "uri",
+    "identities",
+    "aliases",
+    "assets",
+    "static_leases"
+  ],
+  "title": "InventoryLoaded",
+  "type": "object",
+  "x-event-type": "InventoryLoaded",
+  "x-event-version": 1
+}

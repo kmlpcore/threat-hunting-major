@@ -1,0 +1,38 @@
+# Squid access log, custom logformat with user agent and request size:
+#   ts elapsed_ms client_ip code/status bytes method url user hier/server_ip mime "ua" req_bytes
+# The proxy clock runs 7 s fast; corrected here.
+source: proxy
+version: "1.0.0"
+dataset: squid.access
+format: regex
+parse:
+  pattern: '^(?P<ts>\d+\.\d+)\s+(?P<elapsed>\d+)\s+(?P<client_ip>\S+)\s+(?P<squid_code>[A-Z_]+)/(?P<status>\d{3})\s+(?P<bytes_resp>\d+)\s+(?P<method>\S+)\s+(?P<url>\S+)\s+(?P<user>\S+)\s+(?P<hier>[A-Z_]+)/(?P<server_ip>\S+)\s+(?P<mime>\S+)\s+"(?P<ua>[^"]*)"\s+(?P<bytes_req>\d+)$'
+timestamp: {from: ts, format: epoch}
+clock_skew_seconds: -7
+static:
+  event.kind: event
+  event.module: squid
+  event.category: [network, web]
+  event.type: [access]
+  observer.type: proxy
+  observer.name: squid-01
+fields:
+  event.action: {from: squid_code, transform: lower}
+  event.duration: {from: elapsed, transform: ms_to_ns}
+  event.outcome: {from: status, transform: http_outcome}
+  source.ip: client_ip
+  destination.ip: {from: server_ip, null_if: ["-"]}
+  http.request.method: method
+  http.response.status_code: status
+  http.response.bytes: bytes_resp
+  http.request.bytes: bytes_req
+  http.response.mime_type: {from: mime, null_if: ["-"]}
+  url.full: url
+  user_agent.original: {from: ua, null_if: ["-"]}
+entities:
+  user: {name: {from: user, null_if: ["-"]}}
+  host: {ip_fields: [source.ip]}
+derive:
+  - {fn: url_parts, from: url.full}
+  - {fn: copy, from: url.domain, to: destination.domain}
+  - {fn: network_direction}

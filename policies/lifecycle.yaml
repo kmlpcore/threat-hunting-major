@@ -1,0 +1,18 @@
+# Partition sealing and the raw-archive lifecycle (plan.md sections 3.7, 12.2).
+version: "1.0.0"
+
+seal:
+  # A partition seals once its summary, index and every active feature version that
+  # reads its source are current, AND its hour has passed the watermark + grace.
+  grace_hours: 2
+  # Watermark = latest event time landed for the source. Historical backfills never
+  # advance it past the final hours, so after this much wall-clock time a partition
+  # is also considered complete.
+  max_lateness_hours: 24
+
+archive:
+  # Applied by minio-init as a bucket lifecycle rule on `raw`. The rule only matches
+  # objects tagged sealed=true, so an unsealed partition can never reach the archive.
+  tier: ARCHIVE
+  tag: {key: sealed, value: "true"}
+  transition_after_days: 1     # prototype; plan.md 12.2 uses 90 days hot in production

@@ -1,0 +1,35 @@
+# Zeek conn.log (JSON). The sensor clock runs 2.5 s slow; corrected here.
+source: zeek_conn
+version: "1.0.0"
+dataset: zeek.connection
+format: json
+timestamp: {from: ts, format: epoch}
+clock_skew_seconds: 2.5
+static:
+  event.kind: event
+  event.module: zeek
+  event.category: [network]
+  event.type: [connection]
+  event.action: connection
+  observer.type: sensor
+  observer.name: zeek-core-01
+fields:
+  network.community_id: community_id
+  source.ip: id.orig_h
+  source.port: id.orig_p
+  destination.ip: id.resp_h
+  destination.port: id.resp_p
+  network.transport: proto
+  network.protocol: service
+  source.bytes: orig_bytes
+  destination.bytes: resp_bytes
+  event.duration: {from: duration, transform: seconds_to_ns}
+  event.outcome:
+    from: conn_state
+    map: {SF: success, S1: success, RSTO: success, RSTR: success, S0: failure, REJ: failure}
+    map_default: unknown
+entities:
+  host: {ip_fields: [source.ip, destination.ip]}
+derive:
+  - {fn: network_direction}
+  - {fn: network_bytes}

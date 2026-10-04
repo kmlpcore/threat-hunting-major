@@ -1,0 +1,49 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "feature": {
+      "title": "Feature",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "definition_hash": {
+      "title": "Definition Hash",
+      "type": "string"
+    },
+    "inputs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "output_table": {
+      "title": "Output Table",
+      "type": "string"
+    },
+    "window_days": {
+      "title": "Window Days",
+      "type": "integer"
+    },
+    "newly_registered": {
+      "title": "Newly Registered",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "feature",
+    "version",
+    "definition_hash",
+    "inputs",
+    "output_table",
+    "window_days",
+    "newly_registered"
+  ],
+  "title": "FeatureRegistered",
+  "type": "object",
+  "x-event-type": "FeatureRegistered",
+  "x-event-version": 1
+}

@@ -1,0 +1,30 @@
+# AWS CloudTrail records (one JSON object per record).
+source: cloudtrail
+version: "1.0.0"
+dataset: aws.cloudtrail
+format: json
+timestamp: {from: eventTime, format: iso8601}
+clock_skew_seconds: 0
+static:
+  event.kind: event
+  event.module: aws
+  event.category: [api]
+  cloud.provider: aws
+  observer.type: cloud
+fields:
+  event.provider: eventSource
+  event.action: eventName
+  event.type: {from: readOnly, map: {true: [access], false: [change]}, default: [info]}
+  event.outcome: {from: errorCode, map: {}, map_default: failure, default: success}
+  cloud.region: awsRegion
+  cloud.account.id: recipientAccountId
+  cloud.service.name: {from: eventSource, transform: first_label}
+  source.ip: {from: sourceIPAddress, null_if: ["AWS Internal"]}
+  user_agent.original: userAgent
+  error.code: errorCode
+  error.message: errorMessage
+entities:
+  user:
+    name:
+      - userIdentity.userName
+      - {from: userIdentity.arn, transform: arn_principal_name}

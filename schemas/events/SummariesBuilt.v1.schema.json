@@ -1,0 +1,63 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "title": "Source",
+      "type": "string"
+    },
+    "day": {
+      "title": "Day",
+      "type": "string"
+    },
+    "generation": {
+      "title": "Generation",
+      "type": "string"
+    },
+    "policy_version": {
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "action": {
+      "title": "Action",
+      "type": "string"
+    },
+    "raw_rows": {
+      "title": "Raw Rows",
+      "type": "integer"
+    },
+    "raw_bytes": {
+      "title": "Raw Bytes",
+      "type": "integer"
+    },
+    "partitions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Partitions",
+      "type": "array"
+    },
+    "tables": {
+      "additionalProperties": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Tables",
+      "type": "object"
+    }
+  },
+  "required": [
+    "source",
+    "day",
+    "generation",
+    "policy_version",
+    "action",
+    "raw_rows",
+    "raw_bytes",
+    "partitions",
+    "tables"
+  ],
+  "title": "SummariesBuilt",
+  "type": "object",
+  "x-event-type": "SummariesBuilt",
+  "x-event-version": 1
+}

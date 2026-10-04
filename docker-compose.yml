@@ -1,0 +1,206 @@
+# Prototype stack for milestones M0-M4 (plan.md section 10).
+# Later milestones add ti-enricher and ti-connectors (plan.md section 9).
+#
+#   make up / .\scripts\dev.ps1 up      start everything and wait until healthy
+#   ... seed                              generate 7 days of logs + scenarios and ingest them;
+#                                         the orchestrator then summarises, indexes, builds
+#                                         artefacts and seals every partition on its own
+#   dashboard                             http://localhost:8080
+
+x-engine: &engine
+  build: { context: ., dockerfile: engine/Dockerfile }
+  image: threathunt-engine:dev
+  env_file: .env
+  environment: &engine-env
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/engine
+    BUS_URL: redis://redis:6379/0
+    STORAGE_BACKEND: s3
+    S3_ENDPOINT: http://minio:9000
+    S3_ACCESS_KEY: ${MINIO_ROOT_USER}
+    S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+    S3_REGION: us-east-1
+    LAKEKEEPER_URL: http://lakekeeper:8181
+    GROUND_TRUTH_DIR: /app/benchmarks/ground_truth
+  restart: unless-stopped
+  depends_on:
+    engine-init: { condition: service_completed_successfully }
+
+services:
+  # ------------------------------------------------------------------ infrastructure
+  # MinIO stopped publishing images on Docker Hub/Quay; Chainguard builds it from
+  # source. Free tier only tags `latest`, so the default is pinned by digest.
+  # The image has no shell/curl, so readiness is checked by minio-init instead.
+  minio:
+    image: ${MINIO_IMAGE:-cgr.dev/chainguard/minio@sha256:4cf4831a2bbcf13ddca09c1cbcc9faff716dd3c4247e0babc32864b8ee8e0034}
+    command: ["server", "/data", "--console-address", ":9001"]
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [minio-data:/data]
+
+  # Stand-in for the deep-archive tier: raw objects tagged sealed=true transition here.
+  minio-archive:
+    image: ${MINIO_IMAGE:-cgr.dev/chainguard/minio@sha256:4cf4831a2bbcf13ddca09c1cbcc9faff716dd3c4247e0babc32864b8ee8e0034}
+    command: ["server", "/data", "--console-address", ":9001"]
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: archive-${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports: ["9101:9001"]
+    volumes: [minio-archive-data:/data]
+
+  minio-init:
+    build:
+      context: infra/minio
+      args:
+        MC_IMAGE: ${MC_IMAGE:-cgr.dev/chainguard/minio-client@sha256:b20bdc339b3f2596c8f731793f861d2445fd13a9a3cfb517ff020969f4e4bf71}
+    image: threathunt-minio-init:dev
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      RAW_LOCK_MODE: ${RAW_LOCK_MODE:-GOVERNANCE}
+      RAW_LOCK_PERIOD: ${RAW_LOCK_PERIOD:-1d}
+      ARCHIVE_ENDPOINT: http://minio-archive:9000
+      ARCHIVE_USER: archive-${MINIO_ROOT_USER}
+      ARCHIVE_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      ARCHIVE_TIER: ARCHIVE
+      ARCHIVE_AFTER_DAYS: "1"
+    restart: "no"
+    depends_on:
+      minio: { condition: service_started }
+      minio-archive: { condition: service_started }
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: engine
+    ports: ["5432:5432"]
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d engine"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["6379:6379"]
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  lakekeeper-migrate:
+    image: &lakekeeper-image ${LAKEKEEPER_IMAGE:-quay.io/lakekeeper/catalog:latest-main}
+    command: ["migrate"]
+    environment: &lakekeeper-env
+      LAKEKEEPER__PG_ENCRYPTION_KEY: ${LAKEKEEPER_ENCRYPTION_KEY}
+      LAKEKEEPER__PG_DATABASE_URL_READ: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/lakekeeper
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/lakekeeper
+      RUST_LOG: info
+    restart: "no"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  lakekeeper:
+    image: *lakekeeper-image
+    command: ["serve"]
+    restart: unless-stopped
+    environment: *lakekeeper-env
+    ports: ["8181:8181"]
+    healthcheck:
+      test: ["CMD", "/home/nonroot/lakekeeper", "healthcheck"]
+      interval: 3s
+      timeout: 10s
+      retries: 20
+      start_period: 5s
+    depends_on:
+      lakekeeper-migrate: { condition: service_completed_successfully }
+      minio-init: { condition: service_completed_successfully }
+
+  # ------------------------------------------------------------------ engine
+  engine-init:
+    <<: *engine
+    command: ["python", "-m", "engine.bootstrap"]
+    restart: "no"
+    depends_on:
+      postgres: { condition: service_healthy }
+      lakekeeper: { condition: service_healthy }
+      minio-init: { condition: service_completed_successfully }
+
+  command-api:
+    <<: *engine
+    command: ["uvicorn", "--factory", "engine.api.command_api:create_app", "--host", "0.0.0.0", "--port", "8000"]
+    ports: ["8000:8000"]
+    healthcheck: &api-health
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  query-api:
+    <<: *engine
+    command: ["uvicorn", "--factory", "engine.api.query_api:create_app", "--host", "0.0.0.0", "--port", "8001"]
+    ports: ["8001:8001"]
+    healthcheck:
+      <<: *api-health
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+
+  writer:          # single-writer command queues (advisory lock per queue)
+    <<: *engine
+    command: ["python", "-m", "engine.cqrs.runtime", "writer", "--queues", "system,meta,raw,summary,index,features,seal"]
+
+  outbox-relay:
+    <<: *engine
+    command: ["python", "-m", "engine.cqrs.runtime", "relay"]
+
+  projector:
+    <<: *engine
+    command: ["python", "-m", "engine.cqrs.runtime", "projector"]
+
+  orchestrator:    # reconciler: landed -> summaries / index -> features -> seal
+    <<: *engine
+    command: ["python", "-m", "engine.cqrs.runtime", "orchestrator"]
+
+  dashboard:       # prototype UI; reads via the query API, writes via the command API
+    <<: *engine
+    command: ["uvicorn", "--factory", "engine.api.dashboard:create_app", "--host", "0.0.0.0", "--port", "8080"]
+    ports: ["8080:8080"]
+    environment:
+      <<: *engine-env
+      COMMAND_API_URL: http://command-api:8000
+      QUERY_API_URL: http://query-api:8001
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # ------------------------------------------------------------------ tools (docker compose run --rm cli ...)
+  cli:
+    <<: *engine
+    profiles: ["tools"]
+    restart: "no"
+    entrypoint: ["python", "-m", "engine.cli"]
+    environment:
+      <<: *engine-env
+      COMMAND_API_URL: http://command-api:8000
+      QUERY_API_URL: http://query-api:8001
+    volumes: ["./benchmarks/ground_truth:/app/benchmarks/ground_truth"]
+
+volumes:
+  minio-data:
+  minio-archive-data:
+  postgres-data:
+  redis-data:

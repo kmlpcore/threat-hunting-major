@@ -1,0 +1,57 @@
+# Windows Security event log (as forwarded by WEF / winlogbeat raw JSON).
+source: windows_security
+version: "1.0.0"
+dataset: windows.security
+format: json
+timestamp: {from: TimeCreated, format: iso8601}
+clock_skew_seconds: 0
+static:
+  event.kind: event
+  event.module: windows
+  event.provider: Microsoft-Windows-Security-Auditing
+  observer.type: host
+fields:
+  event.code: {from: EventID, transform: str}
+  winlog.record_id: EventRecordID
+  event.action:
+    from: EventID
+    map: {4624: logged-in, 4625: logon-failed, 4634: logged-out, 4648: logged-in-explicit,
+          4672: logged-in-special, 4728: added-member-to-group, 4732: added-member-to-group}
+  event.category:
+    from: EventID
+    map: {4624: [authentication], 4625: [authentication], 4634: [authentication], 4648: [authentication],
+          4672: [iam], 4728: [iam], 4732: [iam]}
+  event.type:
+    from: EventID
+    map: {4624: [start], 4625: [start], 4634: [end], 4648: [start], 4672: [admin], 4728: [group, change],
+          4732: [group, change]}
+  event.outcome:
+    from: EventID
+    map: {4625: failure}
+    map_default: success
+  source.ip: {from: IpAddress, transform: strip, null_if: ["-", "::1", "127.0.0.1"]}
+  source.port: {from: IpPort, null_if: ["-", "0"]}
+  winlog.logon.type:
+    from: LogonType
+    map: {2: Interactive, 3: Network, 4: Batch, 5: Service, 7: Unlock, 9: NewCredentials, 10: RemoteInteractive,
+          11: CachedInteractive}
+  winlog.event_data.Status: Status
+  winlog.event_data.SubStatus: SubStatus
+  winlog.event_data.AuthenticationPackageName: AuthenticationPackageName
+  winlog.event_data.PrivilegeList: PrivilegeList
+entities:
+  user: {name: TargetUserName, domain: TargetDomainName, sid: TargetUserSid}
+  host: {name: Computer}
+overrides:
+  # 4672: the privileged principal is the Subject.
+  - when: {EventID: [4672]}
+    entities:
+      user: {name: SubjectUserName, domain: SubjectDomainName, sid: SubjectUserSid}
+  # Group membership changes: Subject = actor, Target* = group, Member* = added principal.
+  - when: {EventID: [4728, 4732]}
+    fields:
+      group.name: TargetUserName
+      group.id: TargetSid
+    entities:
+      user: {name: SubjectUserName, domain: SubjectDomainName, sid: SubjectUserSid}
+      target_user: {name: {from: MemberName, transform: dn_cn}, sid: MemberSid}

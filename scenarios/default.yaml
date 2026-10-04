@@ -1,0 +1,60 @@
+# Attack scenarios injected into the synthetic baseline.
+#   day:  offset from the run's start date (scenarios past the last day are skipped)
+#   hour: UTC hour of day (fractions allowed)
+#   victim/actor/target: "auto" (seeded random pick), a sAMAccountName, or "@<scenario-id>"
+#                        to reuse the victim of an earlier scenario (builds a kill chain)
+# Attacker infrastructure is RFC 5737 addresses and .example domains only.
+scenarios:
+  - id: s01-password-spray
+    type: password_spray
+    day: 1
+    hour: 3.25
+    params: {src_ip: 198.51.100.23, users: 30}
+
+  - id: s02-brute-force
+    type: brute_force
+    day: 1
+    hour: 22.5
+    params: {target: auto, src_ip: 203.0.113.66, attempts: 150, host: WEB01, success: true}
+
+  - id: s03-encoded-powershell
+    type: encoded_powershell
+    day: 2
+    hour: 10.4
+    params: {victim: auto, domain: update-check.badcdn.example, c2_ip: 203.0.113.80}
+
+  - id: s04-lolbins
+    type: lolbins
+    day: 2
+    hour: 10.6
+    params: {victim: "@s03-encoded-powershell", domain: cdn-static.badcdn.example, c2_ip: 203.0.113.81}
+
+  - id: s05-lateral-movement
+    type: lateral_movement
+    day: 3
+    hour: 14.0
+    params: {actor: auto, targets: [SQL01, APP01, FS01, DC02]}
+
+  - id: s06-privilege-escalation
+    type: privilege_escalation
+    day: 3
+    hour: 15.5
+    params: {actor: "@s05-lateral-movement", member: "@s03-encoded-powershell", group: Domain Admins}
+
+  - id: s07-dns-tunnelling
+    type: dns_tunnelling
+    day: 4
+    hour: 11.0
+    params: {victim: auto, domain: t.exfil-dns.example, queries: 400}
+
+  - id: s08-exfiltration-burst
+    type: exfiltration_burst
+    day: 4
+    hour: 2.0
+    params: {victim: "@s03-encoded-powershell", dst_ip: 203.0.113.200, domain: files-share.example, total_mb: 2000}
+
+  - id: s09-cryptomining
+    type: cryptomining
+    day: 5
+    hour: 9.0
+    params: {host: APP01, hours: 30, pool: pool.minexmr-mirror.example, pool_ip: 198.51.100.77}

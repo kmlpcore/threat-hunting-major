@@ -1,0 +1,86 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "feature": {
+      "title": "Feature",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "day": {
+      "title": "Day",
+      "type": "string"
+    },
+    "generation": {
+      "title": "Generation",
+      "type": "string"
+    },
+    "rows": {
+      "title": "Rows",
+      "type": "integer"
+    },
+    "output_table": {
+      "title": "Output Table",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Snapshot Id"
+    },
+    "input_snapshots": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Input Snapshots",
+      "type": "object"
+    },
+    "input_bytes": {
+      "title": "Input Bytes",
+      "type": "integer"
+    },
+    "raw_bytes_read": {
+      "title": "Raw Bytes Read",
+      "type": "integer"
+    },
+    "input_sources": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Input Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "feature",
+    "version",
+    "day",
+    "generation",
+    "rows",
+    "output_table",
+    "snapshot_id",
+    "input_snapshots",
+    "input_bytes",
+    "raw_bytes_read",
+    "input_sources"
+  ],
+  "title": "ArtefactsBuilt",
+  "type": "object",
+  "x-event-type": "ArtefactsBuilt",
+  "x-event-version": 1
+}

@@ -1,0 +1,203 @@
+# Feature (artefact) definitions — plan.md section 3.6.
+#
+# A feature is built per day from SUMMARY tables only (never raw). Its SQL runs in
+# DuckDB with every input table registered under its short name, holding the rows
+# for [day - window_days, day]. Use '{day}' for the day being built.
+#
+# Versions are immutable: to change a definition, add a new version. Registering a
+# feature version (active: true here, or the dashboard's "Activate" button) makes
+# the orchestrator backfill it over every day that has summaries.
+#
+# Output rows get `day`, `feature_version` and `built_at` added.
+
+features:
+  - name: auth_graph_edges
+    version: "1"
+    active: true
+    description: user -> host logon edges per day; first_seen = edge not seen earlier in the window
+    inputs: [auth_hourly]
+    window_days: 30
+    sql: |
+      WITH today AS (
+        SELECT user_name, host_name, min(hour) AS first_ts, max(hour) AS last_ts,
+               sum(success) AS successes, sum(failure) AS failures,
+               list_distinct(flatten(list(logon_types))) AS logon_types,
+               list_distinct(flatten(list(src_ips))) AS src_ips
+        FROM auth_hourly
+        WHERE day = '{day}' AND user_name IS NOT NULL AND host_name IS NOT NULL
+        GROUP BY ALL),
+      hist AS (SELECT DISTINCT user_name, host_name FROM auth_hourly WHERE day < '{day}' AND success > 0)
+      SELECT t.*, (h.user_name IS NULL) AS first_seen
+      FROM today t LEFT JOIN hist h USING (user_name, host_name)
+
+  - name: process_lineage_edges
+    version: "1"
+    active: true
+    description: parent -> child process edges per host per day
+    inputs: [process_daily]
+    window_days: 0
+    sql: |
+      SELECT host_name, parent_name, process_name, sum(exec_count) AS execs,
+             max(distinct_cmdline_hashes) AS cmdline_variants,
+             list_distinct(flatten(list(users))) AS users, any_value(process_hash) AS process_hash
+      FROM process_daily WHERE day = '{day}'
+      GROUP BY ALL
+
+  - name: entity_profiles
+    version: "1"
+    active: true
+    description: rolling 30-day per-user baseline (hosts, active hours, logon volume, privilege)
+    inputs: [user_daily, auth_hourly]
+    window_days: 30
+    sql: |
+      WITH hours AS (
+        SELECT user_name, list_sort(list_distinct(list(hour(hour)))) AS active_hours
+        FROM auth_hourly WHERE user_name IS NOT NULL AND success > 0 GROUP BY user_name)
+      SELECT u.user_name, count(DISTINCT u.day) AS days_active, avg(u.logons) AS avg_logons,
+             avg(u.distinct_hosts) AS avg_hosts, list_distinct(flatten(list(u.hosts))) AS usual_hosts,
+             max(u.privileged_actions) AS max_privileged_actions, sum(u.failed_logons) AS failed_logons,
+             any_value(h.active_hours) AS active_hours
+      FROM user_daily u LEFT JOIN hours h USING (user_name)
+      GROUP BY u.user_name
+
+  - name: rarity_scores
+    version: "1"
+    active: true
+    description: org-wide prevalence of processes, parent-child pairs, domains and user agents (30 days)
+    inputs: [process_daily, dns_daily, web_daily]
+    window_days: 30
+    sql: |
+      WITH n AS (SELECT greatest(count(DISTINCT host_name), 1)::DOUBLE AS hosts FROM
+                   (SELECT host_name FROM process_daily UNION SELECT host_name FROM dns_daily)),
+      e AS (
+        SELECT 'process' AS entity_type, process_name AS entity, count(DISTINCT host_name) AS hosts,
+               sum(exec_count) AS occurrences FROM process_daily GROUP BY ALL
+        UNION ALL
+        SELECT 'parent_child', parent_name || ' -> ' || process_name, count(DISTINCT host_name), sum(exec_count)
+        FROM process_daily GROUP BY ALL
+        UNION ALL
+        SELECT 'domain', registered_domain, count(DISTINCT host_name), sum(query_count) FROM dns_daily GROUP BY ALL
+        UNION ALL
+        SELECT 'user_agent', ua, count(DISTINCT host_name), count(*)
+        FROM (SELECT host_name, unnest(user_agents) AS ua FROM web_daily) GROUP BY ALL)
+      SELECT entity_type, entity, hosts, occurrences, hosts / (SELECT hosts FROM n) AS prevalence,
+             1 - hosts / (SELECT hosts FROM n) AS rarity
+      FROM e WHERE entity IS NOT NULL
+
+  - name: entity_timeline
+    version: "1"
+    active: true
+    description: compacted per-entity hourly sequence (auth outcomes, outbound connections)
+    inputs: [auth_hourly, network_hourly]
+    window_days: 0
+    sql: |
+      SELECT 'user' AS entity_type, user_name AS entity, hour AS ts, 'auth' AS event_class,
+             CASE WHEN failure > 0 THEN 'logon-failure' ELSE 'logon' END AS action, host_name AS peer,
+             CASE WHEN success = 0 THEN 'failure' ELSE 'success' END AS outcome, success + failure AS count
+      FROM auth_hourly WHERE day = '{day}' AND user_name IS NOT NULL
+      UNION ALL
+      SELECT 'host', host_name, hour, 'network', 'conn:' || dest_port::VARCHAR, dest_ip,
+             CASE WHEN failed_conns > 0 THEN 'partial' ELSE 'success' END, conn_count
+      FROM network_hourly WHERE day = '{day}' AND direction IN ('outbound', 'external') AND host_name IS NOT NULL
+      ORDER BY entity, ts
+
+  - name: candidates
+    version: "1"
+    active: true
+    description: >
+      prefilter of entities worth a closer look (rare + privileged + anomalous).
+      NEVER the sole source of truth: rules must not be evaluated on candidates only.
+    inputs: [auth_hourly, process_daily, dns_daily, web_daily, metrics_hourly]
+    window_days: 30
+    sql: |
+      WITH hosts AS (SELECT greatest(count(DISTINCT host_name), 1)::DOUBLE AS n FROM process_daily),
+      proc_prev AS (SELECT process_name, count(DISTINCT host_name) AS h FROM process_daily GROUP BY ALL),
+      seen_before AS (SELECT DISTINCT user_name, host_name FROM auth_hourly WHERE day < '{day}' AND success > 0)
+      SELECT 'host' AS entity_type, p.host_name AS entity, 'rare_process' AS reason,
+             p.process_name || ' (parent ' || coalesce(p.parent_name, '?') || ')' AS detail,
+             1 - pp.h / (SELECT n FROM hosts) AS score
+      FROM process_daily p JOIN proc_prev pp USING (process_name)
+      WHERE p.day = '{day}' AND pp.h <= 1 AND (SELECT n FROM hosts) >= 5
+      UNION ALL
+      SELECT 'host', host_name, 'dns_high_entropy', registered_domain, avg_label_entropy
+      FROM dns_daily WHERE day = '{day}' AND distinct_subdomains >= 50 AND avg_label_entropy >= 3.5
+      UNION ALL
+      SELECT 'user', user_name, 'auth_failures', host_name, failure::DOUBLE
+      FROM auth_hourly WHERE day = '{day}' AND failure >= 20
+      UNION ALL
+      SELECT 'ip', ip, 'password_spray_source', count(DISTINCT user_name)::VARCHAR || ' users', count(DISTINCT user_name)::DOUBLE
+      FROM (SELECT user_name, unnest(src_ips) AS ip FROM auth_hourly WHERE day = '{day}' AND failure > 0)
+      GROUP BY ip HAVING count(DISTINCT user_name) >= 10
+      UNION ALL
+      SELECT 'user', a.user_name, 'first_seen_privileged_logon', a.host_name, 1.0
+      FROM auth_hourly a LEFT JOIN seen_before s USING (user_name, host_name)
+      WHERE a.day = '{day}' AND a.success > 0 AND s.user_name IS NULL
+        AND a.host_name IN ('dc01', 'dc02', 'sql01', 'app01', 'fs01', 'jump01')
+        AND '{day}' > (SELECT min(day) FROM auth_hourly)
+      UNION ALL
+      SELECT 'user', user_name, 'large_upload', registered_domain, bytes_out::DOUBLE
+      FROM web_daily WHERE day = '{day}' AND bytes_out > 500000000
+      UNION ALL
+      SELECT 'host', host_name, 'sustained_high_cpu', metric, avg(p95)
+      FROM metrics_hourly WHERE day = '{day}' AND metric = 'cpu.usage'
+      GROUP BY ALL HAVING count(*) FILTER (WHERE p95 > 0.9) >= 4
+
+  - name: candidates
+    version: "2"
+    active: true
+    description: >
+      v2 of the prefilter: first-seen privileged logons exclude domain controllers and the file
+      server (every user touches them) and require the user to have history. Versions are
+      immutable, so v1 stays as built; v2 is backfilled from summaries alone.
+    inputs: [auth_hourly, process_daily, dns_daily, web_daily, metrics_hourly]
+    window_days: 30
+    sql: |
+      WITH hosts AS (SELECT greatest(count(DISTINCT host_name), 1)::DOUBLE AS n FROM process_daily),
+      proc_prev AS (SELECT process_name, count(DISTINCT host_name) AS h FROM process_daily GROUP BY ALL),
+      seen_before AS (SELECT DISTINCT user_name, host_name FROM auth_hourly WHERE day < '{day}' AND success > 0)
+      SELECT 'host' AS entity_type, p.host_name AS entity, 'rare_process' AS reason,
+             p.process_name || ' (parent ' || coalesce(p.parent_name, '?') || ')' AS detail,
+             1 - pp.h / (SELECT n FROM hosts) AS score
+      FROM process_daily p JOIN proc_prev pp USING (process_name)
+      WHERE p.day = '{day}' AND pp.h <= 1 AND (SELECT n FROM hosts) >= 5
+      UNION ALL
+      SELECT 'host', host_name, 'dns_high_entropy', registered_domain, avg_label_entropy
+      FROM dns_daily WHERE day = '{day}' AND distinct_subdomains >= 50 AND avg_label_entropy >= 3.5
+      UNION ALL
+      SELECT 'user', user_name, 'auth_failures', host_name, failure::DOUBLE
+      FROM auth_hourly WHERE day = '{day}' AND failure >= 20
+      UNION ALL
+      SELECT 'ip', ip, 'password_spray_source', count(DISTINCT user_name)::VARCHAR || ' users', count(DISTINCT user_name)::DOUBLE
+      FROM (SELECT user_name, unnest(src_ips) AS ip FROM auth_hourly WHERE day = '{day}' AND failure > 0)
+      GROUP BY ip HAVING count(DISTINCT user_name) >= 10
+      UNION ALL
+      SELECT 'user', a.user_name, 'first_seen_privileged_logon', a.host_name, 1.0
+      FROM auth_hourly a LEFT JOIN seen_before s USING (user_name, host_name)
+      WHERE a.day = '{day}' AND a.success > 0 AND s.user_name IS NULL
+        AND a.host_name IN ('sql01', 'app01', 'jump01')
+        AND a.user_name IN (SELECT user_name FROM seen_before)
+        AND '{day}' > (SELECT min(day) FROM auth_hourly)
+      UNION ALL
+      SELECT 'user', user_name, 'large_upload', registered_domain, bytes_out::DOUBLE
+      FROM web_daily WHERE day = '{day}' AND bytes_out > 500000000
+      UNION ALL
+      SELECT 'host', host_name, 'sustained_high_cpu', metric, avg(p95)
+      FROM metrics_hourly WHERE day = '{day}' AND metric = 'cpu.usage'
+      GROUP BY ALL HAVING count(*) FILTER (WHERE p95 > 0.9) >= 4
+
+  # Not active by default: activate it from the dashboard (or RegisterFeature) to
+  # watch a backfill over all existing days that reads summaries only, never raw.
+  - name: dns_beaconing
+    version: "1"
+    active: false
+    description: hosts talking to the same destination in many distinct hours (beaconing / C2 / mining pools)
+    inputs: [network_hourly]
+    window_days: 7
+    sql: |
+      SELECT host_name, dest_ip, dest_port, count(DISTINCT hour) AS active_hours,
+             sum(conn_count) AS conns, sum(bytes_out) AS bytes_out,
+             count(DISTINCT day) AS days
+      FROM network_hourly
+      WHERE direction IN ('outbound', 'external') AND host_name IS NOT NULL
+      GROUP BY ALL
+      HAVING count(DISTINCT hour) >= 12 AND sum(conn_count) / count(DISTINCT hour) <= 3

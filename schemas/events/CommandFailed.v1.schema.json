@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {
+      "title": "Command Id",
+      "type": "string"
+    },
+    "command_type": {
+      "title": "Command Type",
+      "type": "string"
+    },
+    "attempts": {
+      "title": "Attempts",
+      "type": "integer"
+    },
+    "error": {
+      "title": "Error",
+      "type": "string"
+    },
+    "will_retry": {
+      "title": "Will Retry",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "command_id",
+    "command_type",
+    "attempts",
+    "error",
+    "will_retry"
+  ],
+  "title": "CommandFailed",
+  "type": "object",
+  "x-event-type": "CommandFailed",
+  "x-event-version": 1
+}

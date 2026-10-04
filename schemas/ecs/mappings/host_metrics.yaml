@@ -1,0 +1,22 @@
+# Host performance samples from the endpoint agent (one wide row per host per interval).
+source: host_metrics
+version: "1.0.0"
+dataset: host.metrics
+format: json
+timestamp: {from: timestamp, format: iso8601}
+clock_skew_seconds: 0
+static:
+  event.kind: metric
+  event.module: system
+  event.category: [host]
+  event.type: [info]
+  event.action: metrics-sample
+  observer.type: host
+fields:
+  host.cpu.usage: {from: cpu_pct, transform: pct_to_ratio}
+  system.memory.actual.used.pct: {from: mem_pct, transform: pct_to_ratio}
+  host.network.ingress.bytes: net_in_bytes
+  host.network.egress.bytes: net_out_bytes
+  event.duration: {from: interval_s, transform: seconds_to_ns}
+entities:
+  host: {name: host}

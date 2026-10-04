@@ -1,0 +1,33 @@
+# Sysmon Operational log, Event ID 1 (process creation).
+source: sysmon
+version: "1.0.0"
+dataset: windows.sysmon_operational
+format: json
+timestamp: {from: UtcTime, format: "%Y-%m-%d %H:%M:%S.%f"}
+clock_skew_seconds: 0
+static:
+  event.kind: event
+  event.module: sysmon
+  event.provider: Microsoft-Windows-Sysmon
+  event.category: [process]
+  event.type: [start]
+  event.action: process-created
+  event.outcome: unknown
+  observer.type: host
+fields:
+  event.code: {from: EventID, transform: str}
+  winlog.record_id: EventRecordID
+  process.entity_id: ProcessGuid
+  process.pid: ProcessId
+  process.executable: Image
+  process.name: {from: Image, transform: basename}
+  process.command_line: CommandLine
+  process.hash.sha256: {from: Hashes, transform: sha256_from_hashes}
+  process.hash.md5: {from: Hashes, transform: md5_from_hashes}
+  process.parent.pid: ParentProcessId
+  process.parent.executable: ParentImage
+  process.parent.name: {from: ParentImage, transform: basename}
+  process.parent.command_line: ParentCommandLine
+entities:
+  user: {name: User}
+  host: {name: Computer}

@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "partition_id": {
+      "title": "Partition Id",
+      "type": "string"
+    },
+    "source": {
+      "title": "Source",
+      "type": "string"
+    },
+    "day": {
+      "title": "Day",
+      "type": "string"
+    },
+    "seal_version": {
+      "title": "Seal Version",
+      "type": "integer"
+    },
+    "generation": {
+      "title": "Generation",
+      "type": "string"
+    },
+    "rows": {
+      "title": "Rows",
+      "type": "integer"
+    },
+    "files": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Files",
+      "type": "array"
+    },
+    "job_versions": {
+      "additionalProperties": true,
+      "title": "Job Versions",
+      "type": "object"
+    },
+    "snapshot_ids": {
+      "additionalProperties": true,
+      "title": "Snapshot Ids",
+      "type": "object"
+    }
+  },
+  "required": [
+    "partition_id",
+    "source",
+    "day",
+    "seal_version",
+    "generation",
+    "rows",
+    "files",
+    "job_versions",
+    "snapshot_ids"
+  ],
+  "title": "PartitionSealed",
+  "type": "object",
+  "x-event-type": "PartitionSealed",
+  "x-event-version": 1
+}
