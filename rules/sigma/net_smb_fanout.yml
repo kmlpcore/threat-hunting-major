@@ -1,0 +1,23 @@
+title: SMB connection
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5b18
+name: smb_connection_base
+description: Base rule - SMB connection.
+logsource: {category: network_connection}
+detection:
+  selection:
+    DestinationPort: 445
+  condition: selection
+---
+title: SMB fan-out to many hosts
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a18
+description: One host opens SMB sessions to at least 4 different hosts within an hour (lateral movement).
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.lateral_movement, attack.t1021.002]
+correlation:
+  type: value_count
+  rules: [smb_connection_base]
+  group-by: [host.name]
+  timespan: 1h
+  condition: {gte: 4, field: destination.ip}
+level: medium

@@ -1,0 +1,149 @@
+{
+ "query_status": "ok",
+ "_note": "SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence.",
+ "data": [
+  {
+   "id": "9100001",
+   "ioc": "203.0.113.80:80",
+   "threat_type": "botnet_cc",
+   "threat_type_desc": "botnet_cc",
+   "ioc_type": "ip:port",
+   "ioc_type_desc": "ip:port",
+   "malware": "win.cobalt_strike",
+   "malware_printable": "Cobalt Strike",
+   "malware_alias": null,
+   "malware_malpedia": null,
+   "confidence_level": 75,
+   "first_seen": "2026-10-08 09:12:44 UTC",
+   "last_seen": null,
+   "reference": null,
+   "reporter": "synthetic",
+   "tags": [
+    "cobaltstrike",
+    "c2"
+   ]
+  },
+  {
+   "id": "9100002",
+   "ioc": "update-check.badcdn.example",
+   "threat_type": "payload_delivery",
+   "threat_type_desc": "payload_delivery",
+   "ioc_type": "domain",
+   "ioc_type_desc": "domain",
+   "malware": "win.cobalt_strike",
+   "malware_printable": "Cobalt Strike",
+   "malware_alias": null,
+   "malware_malpedia": null,
+   "confidence_level": 75,
+   "first_seen": "2026-10-08 09:12:44 UTC",
+   "last_seen": null,
+   "reference": null,
+   "reporter": "synthetic",
+   "tags": [
+    "cobaltstrike",
+    "powershell"
+   ]
+  },
+  {
+   "id": "9100003",
+   "ioc": "pool.minexmr-mirror.example",
+   "threat_type": "botnet_cc",
+   "threat_type_desc": "botnet_cc",
+   "ioc_type": "domain",
+   "ioc_type_desc": "domain",
+   "malware": "win.xmrig",
+   "malware_printable": "XMRig",
+   "malware_alias": null,
+   "malware_malpedia": null,
+   "confidence_level": 50,
+   "first_seen": "2026-10-08 09:12:44 UTC",
+   "last_seen": null,
+   "reference": null,
+   "reporter": "synthetic",
+   "tags": [
+    "miner",
+    "xmrig"
+   ]
+  },
+  {
+   "id": "9100004",
+   "ioc": "198.51.100.199:443",
+   "threat_type": "botnet_cc",
+   "threat_type_desc": "botnet_cc",
+   "ioc_type": "ip:port",
+   "ioc_type_desc": "ip:port",
+   "malware": "win.qakbot",
+   "malware_printable": "QakBot",
+   "malware_alias": null,
+   "malware_malpedia": null,
+   "confidence_level": 100,
+   "first_seen": "2026-10-08 09:12:44 UTC",
+   "last_seen": null,
+   "reference": null,
+   "reporter": "synthetic",
+   "tags": [
+    "qakbot"
+   ]
+  },
+  {
+   "id": "9100005",
+   "ioc": "http://dl.malware-cdn.example/stage2.exe",
+   "threat_type": "payload_delivery",
+   "threat_type_desc": "payload_delivery",
+   "ioc_type": "url",
+   "ioc_type_desc": "url",
+   "malware": "win.asyncrat",
+   "malware_printable": "AsyncRAT",
+   "malware_alias": null,
+   "malware_malpedia": null,
+   "confidence_level": 90,
+   "first_seen": "2026-10-08 09:12:44 UTC",
+   "last_seen": null,
+   "reference": null,
+   "reporter": "synthetic",
+   "tags": [
+    "asyncrat"
+   ]
+  },
+  {
+   "id": "9100006",
+   "ioc": "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f",
+   "threat_type": "payload",
+   "threat_type_desc": "payload",
+   "ioc_type": "sha256_hash",
+   "ioc_type_desc": "sha256_hash",
+   "malware": "win.asyncrat",
+   "malware_printable": "AsyncRAT",
+   "malware_alias": null,
+   "malware_malpedia": null,
+   "confidence_level": 100,
+   "first_seen": "2026-10-08 09:12:44 UTC",
+   "last_seen": null,
+   "reference": null,
+   "reporter": "synthetic",
+   "tags": [
+    "asyncrat"
+   ]
+  },
+  {
+   "id": "9100007",
+   "ioc": "1.1.1.1:443",
+   "threat_type": "botnet_cc",
+   "threat_type_desc": "botnet_cc",
+   "ioc_type": "ip:port",
+   "ioc_type_desc": "ip:port",
+   "malware": "win.unknown_malware",
+   "malware_printable": "Unknown malware",
+   "malware_alias": null,
+   "malware_malpedia": null,
+   "confidence_level": 25,
+   "first_seen": "2026-10-08 09:12:44 UTC",
+   "last_seen": null,
+   "reference": null,
+   "reporter": "synthetic",
+   "tags": [
+    "false-positive-test"
+   ]
+  }
+ ]
+}

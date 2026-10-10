@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "title": "Scope",
+      "type": "string"
+    },
+    "on": {
+      "title": "On",
+      "type": "boolean"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    },
+    "actor": {
+      "title": "Actor",
+      "type": "string"
+    },
+    "objects": {
+      "title": "Objects",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "scope",
+    "on",
+    "reason",
+    "actor",
+    "objects"
+  ],
+  "title": "LegalHoldChanged",
+  "type": "object",
+  "x-event-type": "LegalHoldChanged",
+  "x-event-version": 1
+}

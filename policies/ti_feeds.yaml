@@ -1,0 +1,131 @@
+# TI feed connectors (plan.md section 3.10b/c). Every feed plugs in through the connector SDK
+# (engine/ti/connectors/sdk.py); this file only says which ones run, how often, how much to trust
+# them, how fast their indicators decay, and how they are marked (TLP).
+#
+#   offline: true   -> connectors read their bundled `sample` file instead of the network.
+#                      Samples are SYNTHETIC (RFC 5737 addresses, .example domains); they mimic each
+#                      feed's format so the whole loop runs without credentials.
+#   Credentials come from environment variables named in `auth_env` (the secret store in production).
+#
+# Licences: abuse.ch data is provided for non-commercial and commercial use under its terms of
+# service; check them (and every other feed's licence) per deployment before redistribution.
+version: "1.0.0"
+offline: true
+
+defaults:
+  schedule_minutes: 60
+  confidence_weight: 1.0
+  tlp: TLP:CLEAR
+  sweep_new_indicators: true          # queue a batched IOC retro-sweep over the retention window
+  sweep_max_indicators: 2000          # per pull; the rest wait for the next pull
+
+decay_days:                           # expires_at = last_seen + decay (per indicator type)
+  ipv4: 30
+  ipv6: 30
+  ip:port: 30
+  domain: 90
+  url: 60
+  md5: 3650
+  sha1: 3650
+  sha256: 3650
+  ja3: 365
+  cve: 36500
+
+feeds:
+  # ---------------------------------------------------------------- v2: legacy feeds
+  threatfox:
+    enabled: true
+    generation: legacy
+    url: https://threatfox-api.abuse.ch/api/v1/
+    mode: api                         # api: POST {"query": "get_iocs", "days": N} | export: JSON export URL
+    export_url: https://threatfox.abuse.ch/export/json/recent/
+    auth_env: THREATFOX_AUTH_KEY      # free abuse.ch account Auth-Key
+    days: 1
+    sample: data/feeds/samples/threatfox_get_iocs.json
+    schedule_minutes: 60
+  urlhaus:
+    enabled: true
+    generation: legacy
+    url: https://urlhaus.abuse.ch/downloads/csv_recent/
+    auth_env: ABUSECH_AUTH_KEY
+    sample: data/feeds/samples/urlhaus_recent.csv
+  malwarebazaar:
+    enabled: true
+    generation: legacy
+    url: https://bazaar.abuse.ch/export/csv/recent/
+    auth_env: ABUSECH_AUTH_KEY
+    sample: data/feeds/samples/malwarebazaar_recent.csv
+  feodo:
+    enabled: true
+    generation: legacy
+    url: https://feodotracker.abuse.ch/downloads/ipblocklist.json
+    sample: data/feeds/samples/feodo_ipblocklist.json
+  sslbl:
+    enabled: true
+    generation: legacy
+    url: https://sslbl.abuse.ch/blacklist/sslipblacklist.csv
+    sample: data/feeds/samples/sslbl_ipblacklist.csv
+  csv_blocklist:
+    enabled: true
+    generation: legacy
+    url: null                         # any plain-text / CSV list of IPs, domains or URLs
+    sample: data/feeds/samples/blocklist.txt
+    tlp: TLP:GREEN
+    confidence_weight: 0.6
+    default_confidence: 60
+  misp:
+    enabled: false                    # point it at your MISP instance
+    generation: legacy
+    url: https://misp.example/attributes/restSearch
+    auth_env: MISP_API_KEY
+    sample: data/feeds/samples/misp_restsearch.json
+    tlp: TLP:AMBER
+  stix1_taxii1:
+    enabled: false
+    generation: legacy
+    url: https://taxii1.example/services/poll
+    collection: default
+    auth_env: TAXII1_CREDENTIALS      # user:password
+    sample: data/feeds/samples/stix1_package.xml
+    tlp: TLP:GREEN
+  # ---------------------------------------------------------------- v2: reference data
+  mitre_attack:
+    enabled: true
+    generation: reference
+    url: https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json
+    sample: data/attack/enterprise-attack-subset.json
+    schedule_minutes: 10080
+  cisa_kev:
+    enabled: true
+    generation: reference
+    url: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
+    sample: data/feeds/samples/cisa_kev.json
+    schedule_minutes: 1440
+
+  # ---------------------------------------------------------------- v3: modern feeds
+  taxii21:
+    enabled: false
+    generation: modern
+    url: https://taxii21.example/api1/
+    collection: indicators
+    auth_env: TAXII21_TOKEN
+    sample: data/feeds/samples/taxii21_objects.json
+    tlp: TLP:GREEN
+  otx:
+    enabled: false
+    generation: modern
+    url: https://otx.alienvault.com/api/v1/pulses/subscribed
+    auth_env: OTX_API_KEY
+    sample: data/feeds/samples/otx_pulses.json
+  abuseipdb:
+    enabled: false
+    generation: modern
+    url: https://api.abuseipdb.com/api/v2/blacklist
+    auth_env: ABUSEIPDB_API_KEY
+    confidence_minimum: 90
+    sample: data/feeds/samples/abuseipdb_blacklist.json
+  webhook:
+    enabled: false
+    generation: modern
+    url: null                         # push feed: POST /ti/webhook/{connector} on the command API
+    sample: data/feeds/samples/webhook_push.json

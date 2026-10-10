@@ -1,0 +1,14 @@
+title: Discovery commands run through a PsExec service
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a06
+description: whoami / net group executed as a child of PSEXESVC (post-lateral-movement discovery).
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.discovery, attack.t1033, attack.t1087.002]
+logsource: {category: process_creation, product: windows}
+detection:
+  selection_parent:
+    ParentImage|endswith: '\PSEXESVC.exe'
+  selection_cmd:
+    CommandLine|contains: ['whoami', 'net group', 'net user']
+  condition: selection_parent and selection_cmd
+level: medium

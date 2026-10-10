@@ -1,0 +1,26 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "command_id": {
+      "title": "Command Id",
+      "type": "string"
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "command_id",
+    "reason"
+  ],
+  "title": "RunQueued",
+  "type": "object",
+  "x-event-type": "RunQueued",
+  "x-event-version": 1
+}

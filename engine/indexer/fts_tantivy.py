@@ -10,7 +10,7 @@ import tantivy
 
 from engine.indexer.backend import KEYWORD_FIELDS, TEXT_FIELDS, DocAddress
 
-INDEX_VERSION = "2"   # v2: adds per source-day bloom bundles
+INDEX_VERSION = "3"   # v2: per source-day bloom bundles; v3: keyword postings copied to index.keyword_postings
 
 
 def _schema() -> tantivy.Schema:

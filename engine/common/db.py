@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from sqlalchemy import (JSON, BigInteger, Boolean, Column, DateTime, Integer, MetaData, String, Table, Text,
+from sqlalchemy import (JSON, BigInteger, Boolean, Column, DateTime, Float, Integer, MetaData, String, Table, Text,
                         UniqueConstraint, create_engine, event, text)
 from sqlalchemy.engine import Connection, Engine
 
@@ -338,6 +338,210 @@ rm_seals = Table(
     Column("job_versions", JSON, nullable=False),
     Column("snapshot_ids", JSON, nullable=False),
     Column("sealed_at", TS, nullable=False),
+    Column("projected_at", TS, nullable=False),
+    schema="readmodel",
+)
+
+# --------------------------------------------------------------------------- M5 write side (rules + cost)
+rules = Table(
+    "rules", metadata,
+    Column("rule_id", String(128), primary_key=True),
+    Column("version_hash", String(64), nullable=False),
+    Column("title", String(512), nullable=False),
+    Column("level", String(32)),
+    Column("origin", String(32), nullable=False),          # hunter | feed_sweep | benchmark
+    Column("tags", JSON, nullable=False),
+    Column("compiled", JSON, nullable=False),
+    Column("yaml", Text, nullable=False),
+    Column("submitted_at", TS, nullable=False),
+    Column("updated_at", TS, nullable=False),
+    schema="meta",
+)
+
+rule_runs = Table(
+    "rule_runs", metadata,
+    Column("run_id", ID, primary_key=True),
+    Column("rule_id", String(128), nullable=False, index=True),
+    Column("rule_version_hash", String(64), nullable=False),
+    Column("origin", String(32), nullable=False),
+    Column("status", String(24), nullable=False),           # planned | awaiting_approval | queued | running |
+                                                            # succeeded | failed | blocked | deferred_budget
+    Column("range_start", TS, nullable=False),
+    Column("range_end", TS, nullable=False),
+    Column("plan", JSON, nullable=False),
+    Column("approval_level", String(16), nullable=False),   # auto | hunter | manager | blocked
+    Column("approvals", JSON, nullable=False),
+    Column("context", JSON),                                # e.g. feed sweep: indicator ids
+    Column("tiers_used", JSON),
+    Column("coverage_pct", Float),
+    Column("snapshot_ids", JSON),
+    Column("bytes_scanned", BigInteger),
+    Column("bytes_restored", BigInteger),
+    Column("files_restored", Integer),
+    Column("estimated_cost", Float, nullable=False),
+    Column("actual_cost", Float),
+    Column("cost_currency", String(8), nullable=False),
+    Column("pricing_version", String(64), nullable=False),
+    Column("hits", Integer),
+    Column("hits_hash", String(64)),
+    Column("actual", JSON),                                 # measured quantities + cost lines
+    Column("duration_ms", Integer),
+    Column("replay_of", ID),
+    Column("execute_command_id", ID),
+    Column("submitted_by", String(128)),
+    Column("error", Text),
+    Column("created_at", TS, nullable=False),
+    Column("started_at", TS),
+    Column("finished_at", TS),
+    schema="meta",
+)
+
+snapshot_leases = Table(
+    "snapshot_leases", metadata,
+    Column("table_name", String(256), primary_key=True),
+    Column("snapshot_id", BigInteger, primary_key=True),
+    Column("run_id", ID, primary_key=True),
+    Column("created_at", TS, nullable=False),
+    Column("expires_at", TS),                               # null = kept for the retention period
+    Column("tagged", Boolean, nullable=False, default=False),
+    schema="meta",
+)
+
+cost_calibration = Table(
+    "cost_calibration", metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("tier", Integer, nullable=False),
+    Column("restore_ratio", Float, nullable=False),         # actual / estimated restored bytes
+    Column("scan_ratio", Float, nullable=False),            # actual / estimated scanned bytes
+    Column("throughput_bytes_per_s", Float),                # observed prototype throughput (reporting)
+    Column("samples", Integer, nullable=False),
+    Column("mean_abs_error_before", Float),
+    Column("computed_at", TS, nullable=False),
+    schema="meta",
+)
+
+llm_egress = Table(
+    "llm_egress", metadata,                                 # audit log of everything sent to an LLM (M6)
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("bundle_hash", String(64), nullable=False, index=True),
+    Column("provider", String(32), nullable=False),
+    Column("model", String(128), nullable=False),
+    Column("prompt_version", String(32), nullable=False),
+    Column("run_id", ID),
+    Column("payload", JSON, nullable=False),                # exactly what left the boundary
+    Column("response", JSON),
+    Column("prompt_tokens", Integer),
+    Column("completion_tokens", Integer),
+    Column("status", String(16), nullable=False),
+    Column("created_at", TS, nullable=False),
+    schema="meta",
+)
+
+feed_state = Table(
+    "feed_state", metadata,                                 # connector cursors and health (M7)
+    Column("connector", String(64), primary_key=True),
+    Column("generation", String(16), nullable=False),
+    Column("version", String(16), nullable=False),
+    Column("cursor", String(64)),
+    Column("last_pull_at", TS),
+    Column("last_status", String(16)),
+    Column("records", Integer),
+    Column("new", Integer),
+    Column("error", Text),
+    Column("offline", Boolean),
+    schema="meta",
+)
+
+legal_holds = Table(
+    "legal_holds", metadata,                                # M8: holds suspend retention for a scope
+    Column("scope", String(256), primary_key=True),
+    Column("reason", Text, nullable=False),
+    Column("actor", String(128), nullable=False),
+    Column("active", Boolean, nullable=False),
+    Column("created_at", TS, nullable=False),
+    Column("released_at", TS),
+    schema="meta",
+)
+
+ecs_mapping_registry = Table(
+    "ecs_mapping_registry", metadata,                       # M8: every mapping version ever used, for 15y reads
+    Column("source", String(64), primary_key=True),
+    Column("version", String(32), primary_key=True),
+    Column("sha256", String(64), nullable=False),
+    Column("content", Text, nullable=False),
+    Column("registered_at", TS, nullable=False),
+    schema="meta",
+)
+
+# --------------------------------------------------------------------------- M5 query side
+rm_rules = Table(
+    "rule_summary", metadata,
+    Column("rule_id", String(128), primary_key=True),
+    Column("title", String(512), nullable=False),
+    Column("level", String(32)),
+    Column("origin", String(32), nullable=False),
+    Column("version_hash", String(64), nullable=False),
+    Column("tags", JSON, nullable=False),
+    Column("techniques", JSON, nullable=False),
+    Column("sources", JSON, nullable=False),
+    Column("kind", String(16), nullable=False),
+    Column("runs", Integer, nullable=False),
+    Column("last_run_id", ID),
+    Column("last_status", String(24)),
+    Column("last_hits", Integer),
+    Column("updated_at", TS, nullable=False),
+    Column("projected_at", TS, nullable=False),
+    schema="readmodel",
+)
+
+rm_rule_runs = Table(
+    "run_status", metadata,
+    Column("run_id", ID, primary_key=True),
+    Column("rule_id", String(128), nullable=False, index=True),
+    Column("title", String(512)),
+    Column("origin", String(32)),
+    Column("status", String(24), nullable=False),
+    Column("range_start", TS),
+    Column("range_end", TS),
+    Column("tiers", JSON),
+    Column("coverage_pct", Float),
+    Column("steps", JSON),
+    Column("estimate", JSON),
+    Column("approval_level", String(16)),
+    Column("approvals", JSON),
+    Column("hits", Integer),
+    Column("bytes_scanned", BigInteger),
+    Column("bytes_restored", BigInteger),
+    Column("files_restored", Integer),
+    Column("estimated_cost", Float),
+    Column("actual_cost", Float),
+    Column("cost_currency", String(8)),
+    Column("pricing_version", String(64)),
+    Column("snapshot_ids", JSON),
+    Column("hits_hash", String(64)),
+    Column("duration_ms", Integer),
+    Column("replay_of", ID),
+    Column("execute_command_id", ID),
+    Column("submitted_at", TS),
+    Column("finished_at", TS),
+    Column("projected_at", TS, nullable=False),
+    schema="readmodel",
+)
+
+rm_feeds = Table(
+    "feed_health", metadata,
+    Column("connector", String(64), primary_key=True),
+    Column("generation", String(16), nullable=False),
+    Column("version", String(16), nullable=False),
+    Column("offline", Boolean),
+    Column("last_pull_at", TS),
+    Column("pulls", Integer, nullable=False),
+    Column("records", Integer),
+    Column("indicators_new", Integer),
+    Column("indicators_total_new", Integer, nullable=False),
+    Column("suppressed", Integer),
+    Column("last_sweep_run_id", ID),
+    Column("cursor", String(64)),
     Column("projected_at", TS, nullable=False),
     schema="readmodel",
 )

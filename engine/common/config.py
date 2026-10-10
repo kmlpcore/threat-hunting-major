@@ -42,6 +42,11 @@ class Settings:
     ground_truth_dir: Path
     raw_row_group_rows: int
     writer_max_attempts: int
+    llm_provider: str | None = None          # groq | openai | vllm | ollama | offline | None (disabled)
+    llm_base_url: str | None = None
+    llm_model: str | None = None
+    llm_api_key: str | None = None
+    pseudonymisation_key: str | None = None
     buckets: Buckets = field(default_factory=Buckets)
     repo_root: Path = REPO_ROOT
 
@@ -61,6 +66,11 @@ class Settings:
             ground_truth_dir=Path(_env("GROUND_TRUTH_DIR", str(REPO_ROOT / "benchmarks" / "ground_truth"))),
             raw_row_group_rows=int(_env("RAW_ROW_GROUP_ROWS", "1000000")),
             writer_max_attempts=int(_env("WRITER_MAX_ATTEMPTS", "3")),
+            llm_provider=_env("LLM_PROVIDER"),
+            llm_base_url=_env("LLM_BASE_URL"),
+            llm_model=_env("LLM_MODEL"),
+            llm_api_key=_env("LLM_API_KEY") or _env("GROQ_API_KEY"),
+            pseudonymisation_key=_env("PSEUDONYMISATION_HMAC_KEY"),
         )
 
     def with_overrides(self, **kwargs) -> "Settings":

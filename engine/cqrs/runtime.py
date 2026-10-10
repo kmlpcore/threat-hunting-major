@@ -66,7 +66,7 @@ class Runtime:
     def reconciler(self):
         if self._reconciler is None:
             from engine.orchestrator.reconciler import Reconciler
-            self._reconciler = Reconciler(self.engine, self.settings.writer_max_attempts)
+            self._reconciler = Reconciler(self.engine, self.settings.writer_max_attempts, settings=self.settings)
         return self._reconciler
 
     def drain(self, max_rounds: int = 100_000, pipeline: bool = False) -> int:
@@ -102,7 +102,7 @@ def _loop(step, idle_sleep: float) -> None:
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="engine.cqrs.runtime")
-    parser.add_argument("role", choices=["writer", "relay", "projector", "orchestrator"])
+    parser.add_argument("role", choices=["writer", "relay", "projector", "orchestrator", "ti-scheduler"])
     parser.add_argument("--queues", default=",".join(QUEUES))
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
@@ -122,6 +122,9 @@ def main(argv: list[str] | None = None) -> None:
     elif args.role == "orchestrator":
         reconciler = rt.reconciler()
         _loop(reconciler.run_once, idle_sleep=3)
+    elif args.role == "ti-scheduler":
+        from engine.ti.scheduler import run_once
+        _loop(lambda: run_once(rt.engine, rt.settings.writer_max_attempts), idle_sleep=30)
     elif args.role == "relay":
         relay = rt.relay()
         _loop(relay.run_once, idle_sleep=0.25)

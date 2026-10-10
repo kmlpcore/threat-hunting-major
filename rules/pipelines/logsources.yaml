@@ -1,0 +1,28 @@
+# Sigma logsource -> engine sources (raw partitions / summary.high_value_events.source).
+# A logsource matches an entry when every key given in `match` equals the rule's value.
+# The first matching entry wins; a logsource that matches nothing is rejected at submit.
+# `ecs` is the logsource used for rules generated directly against ECS fields
+# (retro-sweeps); it covers every analytical source.
+logsources:
+  - match: {category: process_creation, product: windows}
+    sources: [sysmon]
+  - match: {product: windows, service: sysmon}
+    sources: [sysmon]
+  - match: {product: windows, service: security}
+    sources: [windows_security]
+  - match: {category: network_connection}
+    sources: [zeek_conn]
+  - match: {product: zeek, service: conn}
+    sources: [zeek_conn]
+  - match: {category: dns}
+    sources: [zeek_dns]
+  - match: {product: zeek, service: dns}
+    sources: [zeek_dns]
+  - match: {category: proxy}
+    sources: [proxy]
+  - match: {product: aws, service: cloudtrail}
+    sources: [cloudtrail]
+  - match: {category: host_metrics}
+    sources: [host_metrics]
+  - match: {product: ecs}
+    sources: [windows_security, sysmon, zeek_conn, zeek_dns, proxy, cloudtrail, host_metrics]

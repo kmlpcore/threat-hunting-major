@@ -35,12 +35,15 @@ from engine.summary.policy import load_policy
 from engine.summary.tables import TABLES
 
 log = logging.getLogger(__name__)
-PIPELINE_COMMANDS = ["BuildSummaries", "BuildIndex", "ExtractFeatures", "SealPartition", "RegisterFeature"]
+PIPELINE_COMMANDS = ["BuildSummaries", "BuildIndex", "ExtractFeatures", "SealPartition", "RegisterFeature",
+                     "BuildStrategicRollup", "RecordRuleObservations", "ApplyRetention", "ReadabilityDrill"]
 
 
 class Reconciler:
-    def __init__(self, engine: Engine, max_attempts: int = 3, retry_after: timedelta = timedelta(minutes=2)):
+    def __init__(self, engine: Engine, max_attempts: int = 3, retry_after: timedelta = timedelta(minutes=2),
+                 settings=None):
         self.engine = engine
+        self.settings = settings
         self.retry_after = retry_after
         self.max_attempts = max_attempts
         self._submitted: set[str] = set()
@@ -116,9 +119,74 @@ class Reconciler:
                 if r.ready and self._submit(SealPartition(partition_id=pid, generation=r.generation)):
                     submitted["SealPartition"] += 1
 
+        if self.settings is not None:
+            submitted.update(self.ti_rollups())
+        submitted.update(self.release_deferred())
+        if self.settings is not None and not submitted:
+            submitted.update(self.maintenance())
         if submitted:
             log.info("reconciler submitted %s", dict(submitted))
         return sum(submitted.values())
+
+    def maintenance(self) -> Counter:
+        """Daily retention per layer (raw only as a dry run) and the periodic readability drill (M8)."""
+        from datetime import datetime, timedelta, timezone
+
+        from engine.cqrs.commands import ApplyRetention, ReadabilityDrill
+        from engine.retention.policy import load
+        out: Counter = Counter()
+        today = datetime.now(timezone.utc).date()
+        spec = load()
+        with self.engine.connect() as conn:
+            if not conn.execute(select(partitions.c.partition_id).where(partitions.c.sealed.is_(True))
+                                .limit(1)).first():
+                return out
+            drills = stages.runs(conn, "readability")
+        for layer in spec["layers"]:
+            if self._submit(ApplyRetention(layer=layer, dry_run=(layer == "raw"), slot=f"daily:{today}")):
+                out["ApplyRetention"] += 1
+        every = int(spec["readability_drill"]["schedule_days"])
+        last = max((datetime.fromisoformat(scope).date() for (_, scope) in drills), default=None)
+        if last is None or today - last >= timedelta(days=every):
+            if self._submit(ReadabilityDrill(slot=f"scheduled:{today}")):
+                out["ReadabilityDrill"] += 1
+        return out
+
+    def release_deferred(self) -> Counter:
+        """Once a day, offer budget-deferred feed sweeps to the new day's budget (M7)."""
+        from datetime import datetime, timezone
+
+        from engine.common.db import rule_runs
+        from engine.cqrs.commands import ReleaseDeferred
+        out: Counter = Counter()
+        with self.engine.connect() as conn:
+            waiting = conn.execute(select(rule_runs.c.run_id).where(rule_runs.c.status == "deferred_budget")
+                                   .limit(1)).first()
+        if waiting and self._submit(ReleaseDeferred(day=datetime.now(timezone.utc).date().isoformat())):
+            out["ReleaseDeferred"] += 1
+        return out
+
+    def ti_rollups(self) -> Counter:
+        """Rebuild ti.strategic whenever ti.operational has a new snapshot (M6)."""
+        from pyiceberg.exceptions import NoSuchTableError
+
+        from engine.common.catalog import get_catalog
+        from engine.cqrs.commands import BuildStrategicRollup
+        from engine.ti.rollups import PERIODS
+        out: Counter = Counter()
+        try:
+            snap = get_catalog(self.settings).load_table("ti.operational").current_snapshot()
+        except NoSuchTableError:
+            return out
+        if snap is None:
+            return out
+        with self.engine.connect() as conn:
+            done = {scope: r.generation for (stage, scope), r in stages.runs(conn, "ti_rollup").items()}
+        for period in PERIODS:
+            if done.get(period) != str(snap.snapshot_id):
+                if self._submit(BuildStrategicRollup(period_type=period, input_snapshot=str(snap.snapshot_id))):
+                    out["BuildStrategicRollup"] += 1
+        return out
 
 
 def stage_tables_for_source(source: str) -> list[str]:

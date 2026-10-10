@@ -1,4 +1,4 @@
-# Demo script: Artefact-based Retrospective Threat Hunting Engine (M0–M4)
+# Demo script: Artefact-based Retrospective Threat Hunting Engine (M0–M9)
 
 A 12–15 minute walkthrough of the working prototype. Everything runs locally with
 `docker compose`; the main screen is the dashboard at **http://localhost:8080**.
@@ -143,8 +143,7 @@ was ≤ 5%).
 | M3 | Planted IOCs at 100% recall; BM25 top 10 contains attacks | ✅ 12/12 at 100%; 5/5 ranked #1; restore ≤ 0.55% |
 | M4 | Nothing archived unsealed; backfill touches no raw | ✅ tag-gated rule, 0 violations; 7 feature versions × 7 days, 0 raw bytes |
 
-Next milestones: Sigma rules with a coverage planner and cost estimates (M5),
-LLM-assisted threat intelligence (M6), ThreatFox feeds with automatic retro-sweeps (M7).
+M5–M9 continue in section 10 below.
 
 ---
 
@@ -155,4 +154,42 @@ docker compose run --rm --no-deps --entrypoint python cli -m benchmarks.mileston
 docker compose run --rm --no-deps --entrypoint python cli -m benchmarks.index_check        # M3
 docker compose run --rm --no-deps --entrypoint python cli -m benchmarks.ground_truth_check # M1
 .\scripts\dev.ps1 test                                                                     # 29 tests
+```
+
+---
+
+## 10. M5–M9 walkthrough (8–10 min)
+
+Before the audience arrives, also run `.\scripts\dev.ps1 history` (15-year layout) and
+`.\scripts\dev.ps1 report`. Each takes a while.
+
+1. **Rules (M5).** Open the **Rules** page and pick `win_encoded_powershell.yml`, then click **Dry run**. The plan
+   reads *tier 2, high-value events, coverage 100%, auto-approved*: the planner proved that every event the rule
+   can match is retained in `summary.high_value_events`. Then pick `ecs_documentation_range_traffic.yml`
+   (a CIDR over every source) and run it. It has no exact index anchor, so the estimate is a full restore,
+   about 64 USD at modelled scale, and the run waits for **hunter approval**. Approve it in the drawer.
+2. **Costs.** Estimated vs actual per run, with the median error after calibration (about 0%).
+3. **Threat intel (M6).** `ti.strategic` per tactic and year: 2012–2026, with the YoY delta in each cell's tooltip.
+   Open a pattern: LLM output is advisory; validate or reject it.
+4. **Feeds (M7).** Every connector with its last pull. The ThreatFox row shows that new indicators queued a
+   retro-sweep. In `ti.tactical`, `203.0.113.80:80` (Cobalt Strike) has `org_sightings` > 0, while the decoys
+   have 0 and `1.1.1.1` is `false_positive` (warninglist). Record an analyst indicator, e.g. `203.0.113.66`,
+   and watch its sightings appear.
+5. **Retention (M8).** 15 years minimum per layer, partitions per year 2012–2026, and the last readability drill
+   (it read archived objects back through the archive tier). Run the drill live.
+6. **Evaluation (M9).** Open `docs/evaluation.md`. Every target in plan.md section 11 is met: tier-hit 73.7%,
+   recall 1.0, IOC restore ratio ≤ 1.7%, estimate error 0% median. For 5-year hunts, full rehydration costs
+   2,788 USD per hunt and this design 1,055 USD.
+
+| Milestone | Exit criterion | Result |
+|---|---|---|
+| M5 | Corpus runs with tiers, coverage, bytes, est./actual cost; pinned reruns identical | ✅ 19/19, replays identical |
+| M6 | No identifiers in egress; invalid ATT&CK IDs rejected; strategic shows planted tactics | ✅ test-enforced |
+| M7 | Planted ThreatFox IOC → sweep → org_sightings / feed_match / strategic | ✅ 7 s feed-to-sighting |
+| M8 | 15-year layout queryable; YoY comparison | ✅ 2012–2026, 2,237 partitions |
+| M9 | Evaluation report | ✅ docs/evaluation.md |
+
+```powershell
+.\scripts\dev.ps1 test      # 64 tests (+1 E2E, skipped unless E2E=1)
+.\scripts\dev.ps1 report    # regenerates docs/evaluation.md
 ```

@@ -1,0 +1,1108 @@
+{
+  "generated_at": "2026-10-10T09:40:50+00:00",
+  "run_id": "demo",
+  "mode": "compose",
+  "dataset": {
+    "records": 91106,
+    "days": 7,
+    "users": 40,
+    "history_years": 14
+  },
+  "fidelity": {
+    "rules": 19,
+    "succeeded": 19,
+    "tier_hit_rate": 0.7368,
+    "tier_distribution": {
+      "1": 2,
+      "2": 12,
+      "3": 5
+    },
+    "recall_tier12_min": 1.0,
+    "recall_tier12_mean": 1.0,
+    "latency_ms": {
+      "1": {
+        "p50": 237,
+        "p95": 241
+      },
+      "2": {
+        "p50": 245,
+        "p95": 367
+      },
+      "3": {
+        "p50": 996,
+        "p95": 8026
+      }
+    },
+    "per_rule": [
+      {
+        "rule": "aws_cloudtrail_tampering",
+        "run_id": "2d978800-0b16-46b4-a695-9fa631635f81",
+        "title": "CloudTrail logging stopped or deleted",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 0,
+        "tier_hits": 0,
+        "raw_entities": 0,
+        "tier_entities": 0,
+        "entity_recall": null,
+        "entity_precision_vs_raw": null,
+        "bytes_scanned": 36653,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 248,
+        "estimated_cost": 0.002622,
+        "actual_cost": 0.002622,
+        "approval_level": "auto",
+        "label_precision": null,
+        "raw_label_precision": null
+      },
+      {
+        "rule": "dns_ioc_domains",
+        "run_id": "12e77c21-a45d-43be-b1e1-376d14fc813a",
+        "title": "DNS lookup of known payload domains",
+        "status": "succeeded",
+        "tiers": [
+          3
+        ],
+        "exact": true,
+        "coverage_pct": 0.0,
+        "raw_hits": 4,
+        "tier_hits": 4,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 0,
+        "bytes_restored": 50517,
+        "files_restored": 1,
+        "full_rehydration_bytes": null,
+        "duration_ms": 29,
+        "estimated_cost": 0.116557,
+        "actual_cost": 0.13082,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "dns_tunnelling",
+        "run_id": "086ab740-52b4-44b4-b1c9-1ca289d865e2",
+        "title": "DNS tunnelling - many unique TXT names under one domain",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": false,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "bytes_scanned": 59611,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 243,
+        "estimated_cost": 0.004264,
+        "actual_cost": 0.004264,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "ecs_documentation_range_traffic",
+        "run_id": "3e24d505-668e-4cf6-bd25-2ae4df7d18b6",
+        "title": "Any traffic involving the 203.0.113.0/24 range",
+        "status": "succeeded",
+        "tiers": [
+          3
+        ],
+        "exact": true,
+        "coverage_pct": 0.0,
+        "raw_hits": 349,
+        "tier_hits": 349,
+        "raw_entities": 3,
+        "tier_entities": 3,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 0,
+        "bytes_restored": 25909068,
+        "files_restored": 744,
+        "full_rehydration_bytes": null,
+        "duration_ms": 8026,
+        "estimated_cost": 59.761247,
+        "actual_cost": 59.761247,
+        "approval_level": "hunter",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "net_miner_pool_port",
+        "run_id": "c55439b3-fa50-4373-ba80-97f216fdf145",
+        "title": "Connection to a common mining-pool port",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 30,
+        "tier_hits": 30,
+        "raw_entities": 2,
+        "tier_entities": 2,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "bytes_scanned": 243593,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 248,
+        "estimated_cost": 0.017423,
+        "actual_cost": 0.017423,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "net_smb_fanout",
+        "run_id": "a145665c-c5c3-4c77-9fa6-2201352a2df5",
+        "title": "SMB fan-out to many hosts",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": false,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "bytes_scanned": 243593,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 283,
+        "estimated_cost": 0.017423,
+        "actual_cost": 0.017423,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "proxy_c2_ioc",
+        "run_id": "474abe7a-922f-435c-a46d-bc00cdc6f2b1",
+        "title": "Proxied traffic to known C2 addresses",
+        "status": "succeeded",
+        "tiers": [
+          3
+        ],
+        "exact": true,
+        "coverage_pct": 0.0,
+        "raw_hits": 4,
+        "tier_hits": 4,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 0,
+        "bytes_restored": 70723,
+        "files_restored": 1,
+        "full_rehydration_bytes": null,
+        "duration_ms": 42,
+        "estimated_cost": 0.163159,
+        "actual_cost": 0.182978,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "proxy_large_upload",
+        "run_id": "08bbedf4-65b1-414a-b0ba-eb11cab80cb2",
+        "title": "Large HTTP upload",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 18,
+        "tier_hits": 18,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 41504,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 180,
+        "estimated_cost": 0.002969,
+        "actual_cost": 0.002969,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "proxy_suspicious_user_agent",
+        "run_id": "2cee468b-6021-4f30-8b0f-015f531fefde",
+        "title": "Download by a non-browser Windows user agent",
+        "status": "succeeded",
+        "tiers": [
+          3
+        ],
+        "exact": true,
+        "coverage_pct": 0.0,
+        "raw_hits": 4,
+        "tier_hits": 4,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 0,
+        "bytes_restored": 4143751,
+        "files_restored": 75,
+        "full_rehydration_bytes": null,
+        "duration_ms": 996,
+        "estimated_cost": 9.557941,
+        "actual_cost": 9.557941,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_admin_group_add",
+        "run_id": "b5dbb474-7732-4f68-9af5-95d364c89d65",
+        "title": "Member added to a privileged domain group",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 288619,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 367,
+        "estimated_cost": 0.020644,
+        "actual_cost": 0.020644,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_brute_force",
+        "run_id": "1864c9ed-ebcf-4b79-97bf-aabf8fa68368",
+        "title": "Brute force against one account on one host",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": false,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "bytes_scanned": 51872,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 302,
+        "estimated_cost": 0.00371,
+        "actual_cost": 0.00371,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_certutil_download",
+        "run_id": "e53901bf-17f5-4921-aa99-1531e6b5b933",
+        "title": "Certutil used to download a file",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 125223,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 200,
+        "estimated_cost": 0.008957,
+        "actual_cost": 0.008957,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_encoded_powershell",
+        "run_id": "bc2907cb-031b-4b35-bf9d-16e834c147be",
+        "title": "Encoded PowerShell command line",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 125223,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 180,
+        "estimated_cost": 0.008957,
+        "actual_cost": 0.008957,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_lolbin_proxy_execution",
+        "run_id": "5f239015-e3c6-492b-9d8d-3546fe662686",
+        "title": "LOLBin proxy execution of a remote or staged payload",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 3,
+        "tier_hits": 3,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 125223,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 238,
+        "estimated_cost": 0.008957,
+        "actual_cost": 0.008957,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_miner_commandline",
+        "run_id": "785d9bfe-ffb4-46c3-826a-a40082a05b48",
+        "title": "Cryptominer command line",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 125223,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 196,
+        "estimated_cost": 0.008957,
+        "actual_cost": 0.008957,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_office_spawns_shell",
+        "run_id": "ff862e90-06c2-461a-9c8d-03175efd933f",
+        "title": "Office application spawns a shell or script host",
+        "status": "succeeded",
+        "tiers": [
+          1
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "bytes_scanned": 54692,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 233,
+        "estimated_cost": 0.002445,
+        "actual_cost": 0.002445,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_password_spray",
+        "run_id": "8b563542-8040-4a31-9e7a-427522aff69d",
+        "title": "Password spray from one source",
+        "status": "succeeded",
+        "tiers": [
+          2
+        ],
+        "exact": false,
+        "coverage_pct": 100.0,
+        "raw_hits": 1,
+        "tier_hits": 1,
+        "raw_entities": 1,
+        "tier_entities": 1,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "bytes_scanned": 51872,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 250,
+        "estimated_cost": 0.00371,
+        "actual_cost": 0.00371,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_psexec_child_recon",
+        "run_id": "5f1add38-5405-466c-b4be-55b42e395de0",
+        "title": "Discovery commands run through a PsExec service",
+        "status": "succeeded",
+        "tiers": [
+          3
+        ],
+        "exact": true,
+        "coverage_pct": 0.0,
+        "raw_hits": 4,
+        "tier_hits": 4,
+        "raw_entities": 4,
+        "tier_entities": 4,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "event_recall": 1.0,
+        "bytes_scanned": 0,
+        "bytes_restored": 3068000,
+        "files_restored": 95,
+        "full_rehydration_bytes": null,
+        "duration_ms": 1063,
+        "estimated_cost": 7.07659,
+        "actual_cost": 7.07659,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      },
+      {
+        "rule": "win_psexec_service",
+        "run_id": "3f139ad4-f591-4b77-b7dd-fab01b4cfd02",
+        "title": "PsExec service binary executed",
+        "status": "succeeded",
+        "tiers": [
+          1
+        ],
+        "exact": true,
+        "coverage_pct": 100.0,
+        "raw_hits": 4,
+        "tier_hits": 4,
+        "raw_entities": 4,
+        "tier_entities": 4,
+        "entity_recall": 1.0,
+        "entity_precision_vs_raw": 1.0,
+        "bytes_scanned": 54692,
+        "bytes_restored": 0,
+        "files_restored": 0,
+        "full_rehydration_bytes": null,
+        "duration_ms": 241,
+        "estimated_cost": 0.002445,
+        "actual_cost": 0.002445,
+        "approval_level": "auto",
+        "label_precision": 1.0,
+        "raw_label_precision": 1.0
+      }
+    ]
+  },
+  "fidelity_first_pass": {
+    "rules": 19,
+    "succeeded": 19,
+    "tier_hit_rate": 0.7368,
+    "tier_distribution": {
+      "1": 2,
+      "2": 12,
+      "3": 5
+    },
+    "recall_tier12_min": 1.0,
+    "recall_tier12_mean": 1.0,
+    "latency_ms": {
+      "1": {
+        "p50": 282,
+        "p95": 301
+      },
+      "2": {
+        "p50": 253,
+        "p95": 430
+      },
+      "3": {
+        "p50": 799,
+        "p95": 8808
+      }
+    }
+  },
+  "storage": {
+    "summary_to_raw": 0.0699,
+    "artefacts_to_raw": 0.0117,
+    "index_to_raw": 0.5778,
+    "derived_to_raw": 0.6593
+  },
+  "cost": {
+    "currency": "USD",
+    "pricing_version": "2026-10-aws-us-east-1-v1",
+    "scale_factor": 100000.0,
+    "runs": 19,
+    "mean_cost_per_hunt": {
+      "baseline_full_rehydration": 10.6846,
+      "ours": 4.0433
+    },
+    "mean_actual_cost_by_tier": {
+      "1": 0.002445,
+      "2": 0.009049,
+      "3": 15.341915
+    },
+    "extract": {
+      "build": 6.8057,
+      "storage_per_month": 58.4286,
+      "storage_period": 10517.1419,
+      "total": 10523.9475,
+      "months": 180
+    },
+    "break_even_hunts": 1584.64,
+    "break_even_hunts_per_year": 105.57,
+    "five_year": {
+      "range_days": 1826,
+      "baseline_per_hunt": 2787.52,
+      "ours_per_hunt": 1054.87,
+      "break_even_hunts_per_year": 0.4,
+      "for_n_hunts": {
+        "1": {
+          "baseline": 2787.52,
+          "ours": 1756.02
+        },
+        "10": {
+          "baseline": 27875.24,
+          "ours": 11249.87
+        },
+        "50": {
+          "baseline": 139376.18,
+          "ours": 53444.79
+        },
+        "100": {
+          "baseline": 278752.36,
+          "ours": 106188.45
+        }
+      }
+    },
+    "for_n_hunts": {
+      "1": {
+        "baseline": 10.68,
+        "ours": 10527.99
+      },
+      "10": {
+        "baseline": 106.85,
+        "ours": 10564.38
+      },
+      "50": {
+        "baseline": 534.23,
+        "ours": 10726.11
+      },
+      "100": {
+        "baseline": 1068.46,
+        "ours": 10928.28
+      }
+    },
+    "ioc_sweep_restore_ratio_max": 0.017067,
+    "storage": {
+      "modelled_raw_tb": 6.923,
+      "modelled_derived_tb": 4.565,
+      "ours_per_month": 65.45,
+      "raw_on_standard_per_month": 163.05,
+      "saving_pct": 59.9
+    },
+    "estimate_accuracy": {
+      "uncalibrated": {
+        "runs": 1,
+        "mean": 0.0702,
+        "median": 0.0702,
+        "within_25pct": 1.0
+      },
+      "calibrated": {
+        "runs": 137,
+        "mean": 0.2337,
+        "median": 0.0,
+        "within_25pct": 0.9562
+      }
+    },
+    "feeds": {
+      "sweeps": 6,
+      "retro_sweep_cost_per_indicator": 0.096754,
+      "feed_to_sighting_latency_s": {
+        "median": 7.1,
+        "max": 7.9
+      },
+      "sweep_restore_ratio_max": 0.008615
+    },
+    "per_run": [
+      {
+        "run_id": "2d978800-0b16-46b4-a695-9fa631635f81",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a12",
+        "tier": 2,
+        "actual_cost": 0.002622,
+        "estimated_cost": 0.002622,
+        "full_rehydration_cost": 4.074595,
+        "full_rehydration_bytes": 1766475,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 14.7
+      },
+      {
+        "run_id": "12e77c21-a45d-43be-b1e1-376d14fc813a",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a15",
+        "tier": 3,
+        "actual_cost": 0.13082,
+        "estimated_cost": 0.116557,
+        "full_rehydration_cost": 7.263142,
+        "full_rehydration_bytes": 3148845,
+        "bytes_restored": 50517,
+        "restore_ratio": 0.016043,
+        "full_restore_wait_h": 16.9
+      },
+      {
+        "run_id": "086ab740-52b4-44b4-b1c9-1ca289d865e2",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a10",
+        "tier": 2,
+        "actual_cost": 0.004264,
+        "estimated_cost": 0.004264,
+        "full_rehydration_cost": 7.263142,
+        "full_rehydration_bytes": 3148845,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 16.9
+      },
+      {
+        "run_id": "c55439b3-fa50-4373-ba80-97f216fdf145",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a13",
+        "tier": 2,
+        "actual_cost": 0.017423,
+        "estimated_cost": 0.017423,
+        "full_rehydration_cost": 15.404639,
+        "full_rehydration_bytes": 6678572,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 22.4
+      },
+      {
+        "run_id": "3e24d505-668e-4cf6-bd25-2ae4df7d18b6",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a19",
+        "tier": 3,
+        "actual_cost": 59.761247,
+        "estimated_cost": 59.761247,
+        "full_rehydration_cost": 59.761247,
+        "full_rehydration_bytes": 25909068,
+        "bytes_restored": 25909068,
+        "restore_ratio": 1.0,
+        "full_restore_wait_h": 52.2
+      },
+      {
+        "run_id": "a145665c-c5c3-4c77-9fa6-2201352a2df5",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a18",
+        "tier": 2,
+        "actual_cost": 0.017423,
+        "estimated_cost": 0.017423,
+        "full_rehydration_cost": 15.404639,
+        "full_rehydration_bytes": 6678572,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 22.4
+      },
+      {
+        "run_id": "474abe7a-922f-435c-a46d-bc00cdc6f2b1",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a16",
+        "tier": 3,
+        "actual_cost": 0.182978,
+        "estimated_cost": 0.163159,
+        "full_rehydration_cost": 9.557941,
+        "full_rehydration_bytes": 4143751,
+        "bytes_restored": 70723,
+        "restore_ratio": 0.017067,
+        "full_restore_wait_h": 18.4
+      },
+      {
+        "run_id": "08bbedf4-65b1-414a-b0ba-eb11cab80cb2",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a11",
+        "tier": 2,
+        "actual_cost": 0.002969,
+        "estimated_cost": 0.002969,
+        "full_rehydration_cost": 9.557941,
+        "full_rehydration_bytes": 4143751,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 18.4
+      },
+      {
+        "run_id": "2cee468b-6021-4f30-8b0f-015f531fefde",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a17",
+        "tier": 3,
+        "actual_cost": 9.557941,
+        "estimated_cost": 9.557941,
+        "full_rehydration_cost": 9.557941,
+        "full_rehydration_bytes": 4143751,
+        "bytes_restored": 4143751,
+        "restore_ratio": 1.0,
+        "full_restore_wait_h": 18.4
+      },
+      {
+        "run_id": "b5dbb474-7732-4f68-9af5-95d364c89d65",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a09",
+        "tier": 2,
+        "actual_cost": 0.020644,
+        "estimated_cost": 0.020644,
+        "full_rehydration_cost": 5.208385,
+        "full_rehydration_bytes": 2258032,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 15.5
+      },
+      {
+        "run_id": "1864c9ed-ebcf-4b79-97bf-aabf8fa68368",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a08",
+        "tier": 2,
+        "actual_cost": 0.00371,
+        "estimated_cost": 0.00371,
+        "full_rehydration_cost": 5.208385,
+        "full_rehydration_bytes": 2258032,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 15.5
+      },
+      {
+        "run_id": "e53901bf-17f5-4921-aa99-1531e6b5b933",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a02",
+        "tier": 2,
+        "actual_cost": 0.008957,
+        "estimated_cost": 0.008957,
+        "full_rehydration_cost": 7.07659,
+        "full_rehydration_bytes": 3068000,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 16.8
+      },
+      {
+        "run_id": "bc2907cb-031b-4b35-bf9d-16e834c147be",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a01",
+        "tier": 2,
+        "actual_cost": 0.008957,
+        "estimated_cost": 0.008957,
+        "full_rehydration_cost": 7.07659,
+        "full_rehydration_bytes": 3068000,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 16.8
+      },
+      {
+        "run_id": "5f239015-e3c6-492b-9d8d-3546fe662686",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a03",
+        "tier": 2,
+        "actual_cost": 0.008957,
+        "estimated_cost": 0.008957,
+        "full_rehydration_cost": 7.07659,
+        "full_rehydration_bytes": 3068000,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 16.8
+      },
+      {
+        "run_id": "785d9bfe-ffb4-46c3-826a-a40082a05b48",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a14",
+        "tier": 2,
+        "actual_cost": 0.008957,
+        "estimated_cost": 0.008957,
+        "full_rehydration_cost": 7.07659,
+        "full_rehydration_bytes": 3068000,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 16.8
+      },
+      {
+        "run_id": "ff862e90-06c2-461a-9c8d-03175efd933f",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a04",
+        "tier": 1,
+        "actual_cost": 0.002445,
+        "estimated_cost": 0.002445,
+        "full_rehydration_cost": 7.07659,
+        "full_rehydration_bytes": 3068000,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 16.8
+      },
+      {
+        "run_id": "8b563542-8040-4a31-9e7a-427522aff69d",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a07",
+        "tier": 2,
+        "actual_cost": 0.00371,
+        "estimated_cost": 0.00371,
+        "full_rehydration_cost": 5.208385,
+        "full_rehydration_bytes": 2258032,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 15.5
+      },
+      {
+        "run_id": "5f1add38-5405-466c-b4be-55b42e395de0",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a06",
+        "tier": 3,
+        "actual_cost": 7.07659,
+        "estimated_cost": 7.07659,
+        "full_rehydration_cost": 7.07659,
+        "full_rehydration_bytes": 3068000,
+        "bytes_restored": 3068000,
+        "restore_ratio": 1.0,
+        "full_restore_wait_h": 16.8
+      },
+      {
+        "run_id": "3f139ad4-f591-4b77-b7dd-fab01b4cfd02",
+        "rule_id": "7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a05",
+        "tier": 1,
+        "actual_cost": 0.002445,
+        "estimated_cost": 0.002445,
+        "full_rehydration_cost": 7.07659,
+        "full_rehydration_bytes": 3068000,
+        "bytes_restored": 0,
+        "restore_ratio": 0.0,
+        "full_restore_wait_h": 16.8
+      }
+    ],
+    "as_of": "2026-10-10"
+  },
+  "ti": {
+    "summary": {
+      "tactical": {
+        "indicators": 44,
+        "rows": 50,
+        "by_source": {
+          "internal": 25,
+          "threatfox": 7,
+          "feodo": 2,
+          "urlhaus": 3,
+          "csv_blocklist": 5,
+          "malwarebazaar": 4,
+          "sslbl": 2,
+          "cisa_kev": 2
+        },
+        "sighted": 36
+      },
+      "operational": {
+        "rows": 345,
+        "by_origin": {
+          "rule": 189,
+          "llm": 145,
+          "feed_match": 11
+        },
+        "by_status": {
+          "auto_validated": 222,
+          "proposed": 123
+        }
+      },
+      "strategic": {
+        "rows": 1112,
+        "by_period": {
+          "year": 278,
+          "quarter": 278,
+          "month": 278,
+          "week": 278
+        },
+        "tactics": [
+          "command-and-control",
+          "credential-access",
+          "defense-evasion",
+          "discovery",
+          "execution",
+          "exfiltration",
+          "impact",
+          "initial-access",
+          "lateral-movement",
+          "persistence",
+          "privilege-escalation"
+        ]
+      }
+    },
+    "llm_mapping": {
+      "measured": true,
+      "providers": [
+        "offline/heuristic-v1"
+      ],
+      "accuracy": 1.0,
+      "correct": 9,
+      "scenarios": 9,
+      "detail": [
+        {
+          "scenario": "s01-password-spray",
+          "expected": [
+            "T1110.003"
+          ],
+          "mapped": [
+            "T1110.003"
+          ],
+          "correct": true
+        },
+        {
+          "scenario": "s02-brute-force",
+          "expected": [
+            "T1110.001"
+          ],
+          "mapped": [
+            "T1110.001"
+          ],
+          "correct": true
+        },
+        {
+          "scenario": "s03-encoded-powershell",
+          "expected": [
+            "T1027",
+            "T1059.001",
+            "T1566.001"
+          ],
+          "mapped": [
+            "T1027",
+            "T1059.001",
+            "T1071",
+            "T1105",
+            "T1197",
+            "T1204.002",
+            "T1218.005",
+            "T1218.011"
+          ],
+          "correct": true
+        },
+        {
+          "scenario": "s04-lolbins",
+          "expected": [
+            "T1105",
+            "T1197",
+            "T1218.005",
+            "T1218.011"
+          ],
+          "mapped": [
+            "T1027",
+            "T1059.001",
+            "T1071",
+            "T1105",
+            "T1197",
+            "T1204.002",
+            "T1218.005",
+            "T1218.011"
+          ],
+          "correct": true
+        },
+        {
+          "scenario": "s05-lateral-movement",
+          "expected": [
+            "T1021.002",
+            "T1569.002"
+          ],
+          "mapped": [
+            "T1021.002",
+            "T1033",
+            "T1087.002",
+            "T1569.002"
+          ],
+          "correct": true
+        },
+        {
+          "scenario": "s06-privilege-escalation",
+          "expected": [
+            "T1078.002",
+            "T1098"
+          ],
+          "mapped": [
+            "T1078.002",
+            "T1098"
+          ],
+          "correct": true
+        },
+        {
+          "scenario": "s07-dns-tunnelling",
+          "expected": [
+            "T1048.003",
+            "T1071.004"
+          ],
+          "mapped": [
+            "T1048.003",
+            "T1071.004"
+          ],
+          "correct": true
+        },
+        {
+          "scenario": "s08-exfiltration-burst",
+          "expected": [
+            "T1048",
+            "T1567.002"
+          ],
+          "mapped": [
+            "T1048",
+            "T1567.002"
+          ],
+          "correct": true
+        },
+        {
+          "scenario": "s09-cryptomining",
+          "expected": [
+            "T1496"
+          ],
+          "mapped": [
+            "T1027",
+            "T1059.001",
+            "T1496"
+          ],
+          "correct": true
+        }
+      ]
+    }
+  }
+}

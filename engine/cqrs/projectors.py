@@ -15,9 +15,10 @@ from sqlalchemy.engine import Connection, Engine
 from engine.common.bus import EVENTS_STREAM, EventBus
 from engine.common.db import (as_utc, processed_events, rm_activity, rm_batch_status, rm_command_status,
                               rm_feature_days, rm_features, rm_inventory, rm_partition_batches, rm_partition_health,
-                              rm_pings, rm_seals, upsert, utcnow)
+                              rm_feeds, rm_pings, rm_rule_runs, rm_rules, rm_seals, upsert, utcnow)
 from engine.common.events import (ArtefactsBuilt, BatchNormalised, CommandCompleted, CommandFailed, Envelope,
                                   FeatureRegistered, IndexBuilt, InventoryLoaded, PartitionSealed, PingRecorded,
+                                  FeedPulled, RuleEvaluated, RulePlanned, RuleSubmitted, RunApproved, RunQueued,
                                   SummariesBuilt)
 
 log = logging.getLogger(__name__)
@@ -155,6 +156,70 @@ def project_sealed(conn: Connection, env: Envelope) -> None:
         "projected_at": now})
 
 
+def _rule_run(conn: Connection, run_id: str, values: dict) -> None:
+    upsert(conn, rm_rule_runs, {"run_id": run_id}, {**values, "projected_at": utcnow()})
+
+
+def project_rule_submitted(conn: Connection, env: Envelope) -> None:
+    e: RuleSubmitted = env.unwrap()
+    existing = conn.execute(select(rm_rules.c.runs).where(rm_rules.c.rule_id == e.rule_id)).first()
+    upsert(conn, rm_rules, {"rule_id": e.rule_id}, {
+        "title": e.title, "level": e.level, "origin": e.origin, "version_hash": e.rule_version_hash, "tags": e.tags,
+        "techniques": e.techniques, "sources": e.sources, "kind": e.kind,
+        "runs": (existing.runs if existing else 0) + 1, "last_run_id": e.run_id, "last_status": "submitted",
+        "updated_at": env.occurred_at, "projected_at": utcnow()})
+    _rule_run(conn, e.run_id, {"rule_id": e.rule_id, "title": e.title, "origin": e.origin, "status": "submitted",
+                               "range_start": e.range_start, "range_end": e.range_end, "replay_of": e.replay_of,
+                               "approvals": [], "submitted_at": env.occurred_at})
+
+
+def project_rule_planned(conn: Connection, env: Envelope) -> None:
+    e: RulePlanned = env.unwrap()
+    _rule_run(conn, e.run_id, {"rule_id": e.rule_id, "status": e.status, "tiers": e.tiers,
+                               "coverage_pct": e.coverage_pct, "steps": e.steps,
+                               "estimate": {**e.estimate, "approval_reasons": e.approval_reasons},
+                               "approval_level": e.approval_level, "estimated_cost": e.estimate.get("total"),
+                               "cost_currency": e.estimate.get("currency"),
+                               "pricing_version": e.estimate.get("pricing_version")})
+    conn.execute(rm_rules.update().where(rm_rules.c.rule_id == e.rule_id, rm_rules.c.last_run_id == e.run_id)
+                 .values(last_status=e.status, projected_at=utcnow()))
+
+
+def project_run_approved(conn: Connection, env: Envelope) -> None:
+    e: RunApproved = env.unwrap()
+    _rule_run(conn, e.run_id, {"approvals": e.approvals})
+
+
+def project_run_queued(conn: Connection, env: Envelope) -> None:
+    e: RunQueued = env.unwrap()
+    r = conn.execute(select(rm_rule_runs.c.rule_id).where(rm_rule_runs.c.run_id == e.run_id)).first()
+    _rule_run(conn, e.run_id, {"rule_id": r.rule_id if r else "?", "status": "queued",
+                               "execute_command_id": e.command_id})
+
+
+def project_rule_evaluated(conn: Connection, env: Envelope) -> None:
+    e: RuleEvaluated = env.unwrap()
+    _rule_run(conn, e.run_id, {"rule_id": e.rule_id, "status": e.status, "hits": e.hits,
+                               "bytes_scanned": e.bytes_scanned, "bytes_restored": e.bytes_restored,
+                               "files_restored": e.files_restored, "actual_cost": e.actual_cost,
+                               "estimated_cost": e.estimated_cost, "cost_currency": e.currency,
+                               "snapshot_ids": e.snapshot_ids, "hits_hash": e.hits_hash,
+                               "duration_ms": e.duration_ms, "finished_at": env.occurred_at})
+    conn.execute(rm_rules.update().where(rm_rules.c.rule_id == e.rule_id, rm_rules.c.last_run_id == e.run_id)
+                 .values(last_status=e.status, last_hits=e.hits, projected_at=utcnow()))
+
+
+def project_feed_pulled(conn: Connection, env: Envelope) -> None:
+    e: FeedPulled = env.unwrap()
+    prev = conn.execute(select(rm_feeds).where(rm_feeds.c.connector == e.connector)).first()
+    upsert(conn, rm_feeds, {"connector": e.connector}, {
+        "generation": e.generation, "version": e.version, "offline": e.offline, "last_pull_at": env.occurred_at,
+        "pulls": (prev.pulls if prev else 0) + 1, "records": e.records, "indicators_new": e.indicators_new,
+        "indicators_total_new": (prev.indicators_total_new if prev else 0) + e.indicators_new,
+        "suppressed": e.suppressed, "last_sweep_run_id": e.sweep_run_id or (prev.last_sweep_run_id if prev else None),
+        "cursor": e.cursor, "projected_at": utcnow()})
+
+
 def _activity_summary(env: Envelope) -> str:
     p = env.payload
     t = env.event_type
@@ -173,6 +238,44 @@ def _activity_summary(env: Envelope) -> str:
                 f"raw bytes read {p['raw_bytes_read']}")
     if t == "PartitionSealed":
         return f"sealed {p['partition_id']} v{p['seal_version']} ({p['rows']:,} rows, {len(p['files'])} files tagged)"
+    if t == "RuleSubmitted":
+        return f"rule submitted: {p['title']} ({p['origin']}, run {p['run_id'][:8]})"
+    if t == "RulePlanned":
+        return (f"run {p['run_id'][:8]} planned: tiers {p['tiers']}, coverage {p['coverage_pct']}%, est. "
+                f"{p['estimate']['total']:.2f} {p['estimate']['currency']}, approval {p['approval_level']} -> {p['status']}")
+    if t == "RunApproved":
+        return f"run {p['run_id'][:8]} approved by {p['approver']} ({p['role']}); policy satisfied: {p['satisfied']}"
+    if t == "RestoreRequested":
+        return f"run {p['run_id'][:8]} restored {p['files']} objects ({p['bytes']:,} B; {p['modelled_bytes'] / 2**30:,.1f} GB modelled)"
+    if t == "RuleEvaluated":
+        return (f"run {p['run_id'][:8]} evaluated: {p['hits']} hits on tiers {p['tiers_used']}, actual "
+                f"{p['actual_cost']:.2f} vs est. {p['estimated_cost']:.2f} {p['currency']}")
+    if t == "BehaviorPatternRecorded":
+        return (f"TI {p['origin']} observation: {p['title']} on {p.get('entity_pseudonym')} "
+                f"[{', '.join(p['techniques'][:4])}] -> {p['status']}")
+    if t == "PatternReviewed":
+        return f"TI review: {p['target_id'][:16]} {p['verdict']} by {p['reviewer']} ({p['observations']} rows)"
+    if t == "StrategicRollupBuilt":
+        return f"ti.strategic {p['period_type']} rollup: {p['rows']} rows over {p['periods']} periods"
+    if t == "FeedPulled":
+        sweep = f", retro-sweep of {p['swept']} queued" if p.get("sweep_run_id") else ""
+        return (f"feed {p['connector']} pulled{' (offline sample)' if p['offline'] else ''}: {p['records']} records, "
+                f"{p['indicators_new']} new, {p['suppressed']} warninglisted{sweep}")
+    if t == "IndicatorRecorded":
+        return f"indicator {p['type']} {p['value']} from {p['source']} ({p['threat_type'] or '-'}, {p['status']})"
+    if t == "RetentionApplied":
+        return (f"retention {p['layer']} ({p['years']}y, cutoff {p['cutoff']}{', dry run' if p['dry_run'] else ''}): "
+                f"{p['deleted_rows']} rows / {p['deleted_objects']} objects removed, {p['retained_by_lock']} kept by "
+                f"WORM, {p['retained_by_hold']} by legal hold; snapshots tagged {p['tagged_snapshots']}, expired "
+                f"{p['expired_snapshots']}")
+    if t == "ReadabilityChecked":
+        status = "OK" if not p["failures"] else f"{len(p['failures'])} FAILURES"
+        return (f"readability drill {status}: {p['partitions']} partitions over {len(p['years'])} years, "
+                f"{p['files_read']} files ({p['archived_objects_read']} from archive)")
+    if t == "TableCompacted":
+        return f"compacted {p['table']}: {p['files_before']} -> {p['files_after']} files"
+    if t == "LegalHoldChanged":
+        return f"legal hold {'placed on' if p['on'] else 'released from'} {p['scope']} by {p['actor']}"
     if t == "CommandFailed":
         return f"{p['command_type']} failed (attempt {p['attempts']}): {p['error'][:160]}"
     if t == "PingRecorded":
@@ -199,6 +302,21 @@ PROJECTIONS: dict[str, list[Projection]] = {
     "FeatureRegistered": [project_feature_registered, project_activity],
     "ArtefactsBuilt": [project_artefacts, project_activity],
     "PartitionSealed": [project_sealed, project_activity],
+    "RuleSubmitted": [project_rule_submitted, project_activity],
+    "RulePlanned": [project_rule_planned, project_activity],
+    "RunApproved": [project_run_approved, project_activity],
+    "RunQueued": [project_run_queued],
+    "RestoreRequested": [project_activity],
+    "RuleEvaluated": [project_rule_evaluated, project_activity],
+    "BehaviorPatternRecorded": [project_activity],
+    "PatternReviewed": [project_activity],
+    "StrategicRollupBuilt": [project_activity],
+    "FeedPulled": [project_feed_pulled, project_activity],
+    "IndicatorRecorded": [project_activity],
+    "RetentionApplied": [project_activity],
+    "TableCompacted": [project_activity],
+    "ReadabilityChecked": [project_activity],
+    "LegalHoldChanged": [project_activity],
 }
 
 

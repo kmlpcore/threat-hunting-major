@@ -1,0 +1,151 @@
+# pySigma processing pipeline: Sigma field names -> ECS (plan.md section 3.8).
+#
+# Mirrors the field names of pySigma's ECS pipelines (ecs_windows, ecs_zeek_beats) for the
+# log sources this engine ingests. Fields that are already ECS names pass through unchanged,
+# so rules may also be written directly against ECS (retro-sweep rules are generated that way).
+# A field that is neither mapped here nor present in schemas/ecs/fields.yaml is rejected at
+# submit time; it is never silently dropped.
+name: ecs_custom
+priority: 20
+transformations:
+  - id: windows_process_creation
+    type: field_name_mapping
+    mapping:
+      Image: process.executable
+      OriginalFileName: process.name
+      CommandLine: process.command_line
+      ParentImage: process.parent.executable
+      ParentCommandLine: process.parent.command_line
+      ProcessId: process.pid
+      ParentProcessId: process.parent.pid
+      User: user.name
+      Computer: host.name
+      Hashes: process.hash.sha256
+      sha256: process.hash.sha256
+      IntegrityLevel: winlog.event_data.IntegrityLevel
+    rule_conditions:
+      - type: logsource
+        category: process_creation
+        product: windows
+
+  - id: windows_security
+    type: field_name_mapping
+    mapping:
+      EventID: event.code
+      TargetUserName: user.name
+      SubjectUserName: user.name
+      TargetDomainName: user.domain
+      IpAddress: source.ip
+      IpPort: source.port
+      LogonType: winlog.logon.type
+      Computer: host.name
+      WorkstationName: host.name
+      Status: winlog.event_data.Status
+      SubStatus: winlog.event_data.SubStatus
+      AuthenticationPackageName: winlog.event_data.AuthenticationPackageName
+      GroupName: group.name
+      MemberName: user.target.name
+    rule_conditions:
+      - type: logsource
+        product: windows
+        service: security
+
+  - id: network_connection
+    type: field_name_mapping
+    mapping:
+      DestinationIp: destination.ip
+      DestinationPort: destination.port
+      SourceIp: source.ip
+      SourcePort: source.port
+      dst_ip: destination.ip
+      dst_port: destination.port
+      src_ip: source.ip
+      src_port: source.port
+      id.resp_h: destination.ip
+      id.resp_p: destination.port
+      id.orig_h: source.ip
+      id.orig_p: source.port
+      proto: network.transport
+      orig_bytes: source.bytes
+      resp_bytes: destination.bytes
+      Computer: host.name
+    rule_conditions:
+      - type: logsource
+        category: network_connection
+
+  - id: zeek_conn
+    type: field_name_mapping
+    mapping:
+      id.resp_h: destination.ip
+      id.resp_p: destination.port
+      id.orig_h: source.ip
+      id.orig_p: source.port
+      proto: network.transport
+      orig_bytes: source.bytes
+      resp_bytes: destination.bytes
+    rule_conditions:
+      - type: logsource
+        product: zeek
+        service: conn
+
+  - id: dns
+    type: field_name_mapping
+    mapping:
+      query: dns.question.name
+      QueryName: dns.question.name
+      qtype_name: dns.question.type
+      record_type: dns.question.type
+      rcode_name: dns.response_code
+      answer: dns.resolved_ip
+      src_ip: source.ip
+    rule_conditions:
+      - type: logsource
+        category: dns
+
+  - id: zeek_dns
+    type: field_name_mapping
+    mapping:
+      query: dns.question.name
+      qtype_name: dns.question.type
+      rcode_name: dns.response_code
+      answers: dns.resolved_ip
+      id.orig_h: source.ip
+    rule_conditions:
+      - type: logsource
+        product: zeek
+        service: dns
+
+  - id: proxy
+    type: field_name_mapping
+    mapping:
+      c-uri: url.full
+      c-uri-query: url.query
+      c-uri-stem: url.path
+      cs-host: url.domain
+      cs-method: http.request.method
+      cs-bytes: http.request.bytes
+      sc-bytes: http.response.bytes
+      sc-status: http.response.status_code
+      c-useragent: user_agent.original
+      c-ip: source.ip
+      r-dns: url.domain
+      dst_ip: destination.ip
+    rule_conditions:
+      - type: logsource
+        category: proxy
+
+  - id: aws_cloudtrail
+    type: field_name_mapping
+    mapping:
+      eventName: event.action
+      eventSource: cloud.service.name
+      awsRegion: cloud.region
+      sourceIPAddress: source.ip
+      errorCode: error.code
+      errorMessage: error.message
+      userIdentity.userName: user.name
+      userIdentity.arn: user.name
+    rule_conditions:
+      - type: logsource
+        product: aws
+        service: cloudtrail

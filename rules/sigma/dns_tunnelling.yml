@@ -1,0 +1,23 @@
+title: DNS TXT query
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5b10
+name: dns_txt_query_base
+description: Base rule - DNS TXT query.
+logsource: {category: dns}
+detection:
+  selection:
+    record_type: TXT
+  condition: selection
+---
+title: DNS tunnelling - many unique TXT names under one domain
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a10
+description: A host queries at least 100 distinct names under the same registered domain within an hour.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.command_and_control, attack.t1071.004, attack.exfiltration, attack.t1048.003]
+correlation:
+  type: value_count
+  rules: [dns_txt_query_base]
+  group-by: [host.name, dns.question.registered_domain]
+  timespan: 1h
+  condition: {gte: 100, field: dns.question.name}
+level: high

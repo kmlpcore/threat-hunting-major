@@ -3,50 +3,23 @@
 Runs on Linux (the engine container): PyIceberg's local file IO does not support
 Windows drive paths. In compose the same code runs against Lakekeeper + MinIO.
 """
-import argparse
 import sys
-from datetime import date
 
 import pytest
 from sqlalchemy import select
 
-from engine.cli import LocalClient, cmd_ingest
-from engine.common import catalog as catalog_mod
 from engine.common.catalog import get_catalog, read_table, table_stats
 from engine.common.db import partitions, seal_manifest, stage_runs
 from engine.cqrs.commands import RegisterFeature
-from engine.generator.run import generate
 from engine.indexer.search import Searcher
 from engine.summary.tables import TABLES
 
 pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="PyIceberg local IO needs POSIX paths")
 
 
-@pytest.fixture(scope="module")
-def settings(tmp_path_factory):
-    from engine.common.config import Settings
-    tmp = tmp_path_factory.mktemp("pipeline")
-    return Settings.from_env().with_overrides(
-        database_url=f"sqlite:///{(tmp / 'engine.db').as_posix()}", bus_url="memory://", storage_backend="local",
-        local_storage_root=tmp / "objects", ground_truth_dir=tmp / "gt", lakekeeper_url=None)
-
-
-@pytest.fixture(scope="module")
-def runtime(settings):
-    from engine.cqrs.runtime import Runtime
-    return Runtime.from_settings(settings, create_tables=True)
-
-
-@pytest.fixture(scope="module")
-def pipeline(settings, runtime):
-    catalog_mod.reset_catalog()
-    generate(settings, runtime.store, run_id="p", start=date(2026, 9, 7), days=6, users=10, seed=3)
-    client = LocalClient.__new__(LocalClient)
-    client.rt = runtime
-    cmd_ingest(argparse.Namespace(run_id="p", local=True), settings, client)
-    runtime.drain(pipeline=True)
-    yield runtime
-    catalog_mod.reset_catalog()
+@pytest.fixture
+def settings(pl_settings):
+    return pl_settings
 
 
 def test_m2_summaries_carry_policy_version_and_ratio(pipeline, settings):
@@ -54,7 +27,8 @@ def test_m2_summaries_carry_policy_version_and_ratio(pipeline, settings):
     stats = {t.identifier: table_stats(cat, t.identifier) for t in TABLES.values()}
     assert all(s["rows"] > 0 for s in stats.values()), stats
     auth, _ = read_table(cat, "summary.auth_hourly")
-    assert set(auth.column("policy_version").to_pylist()) == {"1.0.0"}
+    from engine.summary.policy import load_policy
+    assert set(auth.column("policy_version").to_pylist()) == {load_policy().version}
     with pipeline.engine.connect() as conn:
         raw_bytes = sum(r.bytes for r in conn.execute(select(partitions)))
     assert sum(s["bytes"] for s in stats.values()) < raw_bytes

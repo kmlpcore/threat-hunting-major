@@ -1,0 +1,12 @@
+title: Proxied traffic to known C2 addresses
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a16
+description: IOC sweep - HTTP requests whose server is a known C2 address.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.command_and_control, attack.t1105]
+logsource: {category: proxy}
+detection:
+  selection:
+    dst_ip: [203.0.113.80, 203.0.113.81]
+  condition: selection
+level: high

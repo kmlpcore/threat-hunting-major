@@ -1,0 +1,38 @@
+# What may leave the boundary when behaviour bundles are sent to an LLM (plan.md 3.9, NFR4).
+# Raw logs are never sent: only derived artefacts and rule hits, with identifiers replaced by
+# HMAC pseudonyms (PSEUDONYMISATION_HMAC_KEY stays inside the organisation).
+version: "1.0.0"
+prompt_version: "behaviour-v1"
+
+provider:
+  # The provider is chosen with LLM_PROVIDER (unset = enrichment disabled):
+  #   groq   -> https://api.groq.com/openai/v1 (needs GROQ_API_KEY)
+  #   openai / vllm / ollama -> any OpenAI-compatible endpoint (LLM_BASE_URL, LLM_API_KEY)
+  #   offline -> deterministic local heuristic, nothing leaves the host (tests, air-gapped demos)
+  # The model always comes from LLM_MODEL or `model` below; it is never hardcoded in code.
+  model: null
+  base_urls:
+    groq: https://api.groq.com/openai/v1
+    openai: https://api.openai.com/v1
+    vllm: http://vllm:8000/v1
+    ollama: http://ollama:11434/v1
+  timeout_s: 60
+  max_retries: 4
+  requests_per_minute: 20
+  temperature: 0
+
+egress:
+  pseudonymise: [user, host, ip, group]   # always replaced by HMAC pseudonyms
+  send_command_lines: false               # false: send command-line features (length, entropy, flags, LOLBin)
+  send_external_domains: true             # attacker infrastructure (non-internal domains) may be sent
+  internal_domain_suffixes: [corp.local, local, lan, internal]
+  max_hits_per_bundle: 40
+  max_artefact_rows_per_bundle: 40
+  tlp_max: TLP:AMBER                      # indicator values marked above this (AMBER+STRICT, RED) never leave
+
+bundling:
+  window_hours: 6                         # hits of one entity within this window form one bundle
+
+validation:
+  auto_validate_confidence: 70            # >= this: auto_validated, below: proposed (analyst review)
+  require_evidence: true                  # every pattern must cite evidence ids present in the bundle

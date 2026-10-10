@@ -1,0 +1,23 @@
+title: Failed logon
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5b08
+name: failed_logon_brute_base
+description: Base rule - failed Windows logon.
+logsource: {product: windows, service: security}
+detection:
+  selection:
+    EventID: 4625
+  condition: selection
+---
+title: Brute force against one account on one host
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a08
+description: At least 50 failed logons for the same account on the same host within 15 minutes.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.credential_access, attack.t1110.001]
+correlation:
+  type: event_count
+  rules: [failed_logon_brute_base]
+  group-by: [TargetUserName, Computer]
+  timespan: 15m
+  condition: {gte: 50}
+level: high

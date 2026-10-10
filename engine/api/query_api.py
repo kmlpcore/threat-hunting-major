@@ -26,7 +26,7 @@ def _page(rows: list[dict], total: int | None = None) -> dict:
 
 def create_app(runtime: Runtime | None = None) -> FastAPI:
     rt = runtime or Runtime.from_settings(Settings.from_env())
-    app = FastAPI(title="Threat Hunting Engine — Query API", version="0.4.0")
+    app = FastAPI(title="Threat Hunting Engine — Query API", version="0.9.0")
 
     @app.get("/health")
     def health():
@@ -97,6 +97,10 @@ def create_app(runtime: Runtime | None = None) -> FastAPI:
         return _row(r)
 
     from engine.api.hunt_routes import build_router
+    from engine.api.rule_routes import build_router as rule_router
+    from engine.api.ti_routes import build_router as ti_router
+    app.include_router(rule_router(rt))
+    app.include_router(ti_router(rt))
     app.include_router(build_router(rt))
     return app
 

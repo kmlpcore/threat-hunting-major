@@ -1,0 +1,75 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "indicator_id": {
+      "title": "Indicator Id",
+      "type": "string"
+    },
+    "type": {
+      "title": "Type",
+      "type": "string"
+    },
+    "value": {
+      "title": "Value",
+      "type": "string"
+    },
+    "source": {
+      "title": "Source",
+      "type": "string"
+    },
+    "threat_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Threat Type"
+    },
+    "malware_family": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Malware Family"
+    },
+    "confidence": {
+      "title": "Confidence",
+      "type": "integer"
+    },
+    "tlp": {
+      "title": "Tlp",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "new": {
+      "title": "New",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "indicator_id",
+    "type",
+    "value",
+    "source",
+    "threat_type",
+    "malware_family",
+    "confidence",
+    "tlp",
+    "status",
+    "new"
+  ],
+  "title": "IndicatorRecorded",
+  "type": "object",
+  "x-event-type": "IndicatorRecorded",
+  "x-event-version": 1
+}

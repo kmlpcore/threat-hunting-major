@@ -1,0 +1,14 @@
+title: Office application spawns a shell or script host
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a04
+description: A document opened in Office starts a command interpreter (malicious macro).
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.initial_access, attack.t1566.001, attack.execution, attack.t1204.002]
+logsource: {category: process_creation, product: windows}
+detection:
+  selection_parent:
+    ParentImage|endswith: ['\WINWORD.EXE', '\EXCEL.EXE', '\POWERPNT.EXE', '\OUTLOOK.EXE']
+  selection_child:
+    Image|endswith: ['\powershell.exe', '\cmd.exe', '\wscript.exe', '\cscript.exe', '\mshta.exe']
+  condition: selection_parent and selection_child
+level: high

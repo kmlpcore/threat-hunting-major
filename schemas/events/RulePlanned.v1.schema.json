@@ -1,0 +1,67 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "tiers": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Tiers",
+      "type": "array"
+    },
+    "coverage_pct": {
+      "title": "Coverage Pct",
+      "type": "number"
+    },
+    "steps": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Steps",
+      "type": "array"
+    },
+    "estimate": {
+      "additionalProperties": true,
+      "title": "Estimate",
+      "type": "object"
+    },
+    "approval_level": {
+      "title": "Approval Level",
+      "type": "string"
+    },
+    "approval_reasons": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Approval Reasons",
+      "type": "array"
+    }
+  },
+  "required": [
+    "run_id",
+    "rule_id",
+    "status",
+    "tiers",
+    "coverage_pct",
+    "steps",
+    "estimate",
+    "approval_level"
+  ],
+  "title": "RulePlanned",
+  "type": "object",
+  "x-event-type": "RulePlanned",
+  "x-event-version": 1
+}

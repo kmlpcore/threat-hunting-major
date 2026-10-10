@@ -1,0 +1,53 @@
+# Multi-year synthetic history (milestone M8): one generated day per past year, with attack
+# scenarios that come and go so the strategic rollups show real year-on-year trends.
+#   years: explicit list | from/to (inclusive) | every: N (years divisible by N)
+# Scenario parameters are the same as scenarios/default.yaml; `day` is always 0 here.
+scenarios:
+  - id: h01-password-spray
+    type: password_spray
+    hour: 3.25
+    every: 2
+    params: {src_ip: 198.51.100.23, users: 30}
+
+  - id: h02-brute-force
+    type: brute_force
+    hour: 22.0
+    from: 2015
+    params: {target: auto, src_ip: 203.0.113.66, attempts: 120, host: WEB01, success: true}
+
+  - id: h03-encoded-powershell
+    type: encoded_powershell
+    hour: 10.4
+    from: 2018
+    params: {victim: auto, domain: update-check.badcdn.example, c2_ip: 203.0.113.80}
+
+  - id: h04-lolbins
+    type: lolbins
+    hour: 10.6
+    from: 2019
+    params: {victim: "@h03-encoded-powershell", domain: cdn-static.badcdn.example, c2_ip: 203.0.113.81}
+
+  - id: h05-lateral-movement
+    type: lateral_movement
+    hour: 14.0
+    years: [2013, 2016, 2019, 2022, 2025]
+    params: {actor: auto, targets: [SQL01, APP01, FS01, DC02]}
+
+  - id: h07-dns-tunnelling
+    type: dns_tunnelling
+    hour: 11.0
+    from: 2021
+    params: {victim: auto, domain: t.exfil-dns.example, queries: 300}
+
+  - id: h08-exfiltration
+    type: exfiltration_burst
+    hour: 2.0
+    years: [2020, 2023, 2025]
+    params: {victim: auto, dst_ip: 203.0.113.200, domain: files-share.example, total_mb: 800}
+
+  - id: h09-cryptomining
+    type: cryptomining
+    hour: 9.0
+    from: 2017
+    to: 2022
+    params: {host: APP01, hours: 8, pool: pool.minexmr-mirror.example, pool_ip: 198.51.100.77}

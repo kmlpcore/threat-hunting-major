@@ -1,0 +1,12 @@
+title: DNS lookup of known payload domains
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a15
+description: IOC sweep - resolution of domains used for payload delivery.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.command_and_control, attack.t1071]
+logsource: {category: dns}
+detection:
+  selection:
+    query: [update-check.badcdn.example, cdn-static.badcdn.example]
+  condition: selection
+level: high

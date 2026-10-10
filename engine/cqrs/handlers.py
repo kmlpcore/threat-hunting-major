@@ -87,7 +87,56 @@ def handle_seal_partition(cmd, ctx: HandlerContext) -> HandlerResult:
     return HandlerResult(events=[e], detail={"partition_id": e.partition_id, "seal_version": e.seal_version})
 
 
+def handle_submit_rule(cmd, ctx: HandlerContext) -> HandlerResult:
+    from engine.rules.service import submit_rule
+    return submit_rule(cmd, ctx)
+
+
+def handle_approve_run(cmd, ctx: HandlerContext) -> HandlerResult:
+    from engine.rules.service import approve_run
+    return approve_run(cmd, ctx)
+
+
+def handle_execute_rule(cmd, ctx: HandlerContext) -> HandlerResult:
+    from engine.rules.service import execute_rule
+    return execute_rule(cmd, ctx)
+
+
+def handle_release_deferred(cmd, ctx: HandlerContext) -> HandlerResult:
+    from engine.rules.service import release_deferred
+    return release_deferred(cmd, ctx)
+
+
+def _retention(name: str):
+    def handler(cmd, ctx: HandlerContext) -> HandlerResult:
+        from engine.retention import enforcer
+        return getattr(enforcer, name)(cmd, ctx)
+    return handler
+
+
+def _ti(name: str):
+    def handler(cmd, ctx: HandlerContext) -> HandlerResult:
+        from engine.ti import service
+        return getattr(service, name)(cmd, ctx)
+    return handler
+
+
 HANDLERS: dict[str, Callable[[Any, HandlerContext], HandlerResult]] = {
+    "RecordRuleObservations": _ti("record_rule_observations"),
+    "EnrichBehavior": _ti("enrich_behavior"),
+    "ReviewPattern": _ti("review_pattern"),
+    "BuildStrategicRollup": _ti("build_strategic_rollup"),
+    "PullFeed": _ti("pull_feed"),
+    "RecordIndicator": _ti("record_indicator"),
+    "RecordFeedSightings": _ti("record_feed_sightings"),
+    "ReleaseDeferred": handle_release_deferred,
+    "ApplyRetention": _retention("apply_retention"),
+    "CompactTable": _retention("compact_table"),
+    "ReadabilityDrill": _retention("readability_drill"),
+    "SetLegalHold": _retention("set_legal_hold"),
+    "SubmitRule": handle_submit_rule,
+    "ApproveRun": handle_approve_run,
+    "ExecuteRule": handle_execute_rule,
     "BuildSummaries": handle_build_summaries,
     "BuildIndex": handle_build_index,
     "RegisterFeature": handle_register_feature,

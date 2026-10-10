@@ -1,0 +1,19 @@
+title: LOLBin proxy execution of a remote or staged payload
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a03
+description: mshta loading a URL, rundll32 loading a DLL from a public folder, or a bitsadmin transfer job.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.defense_evasion, attack.t1218.005, attack.t1218.011, attack.t1197]
+logsource: {category: process_creation, product: windows}
+detection:
+  sel_mshta:
+    Image|endswith: '\mshta.exe'
+    CommandLine|contains: 'http'
+  sel_rundll32:
+    Image|endswith: '\rundll32.exe'
+    CommandLine|contains: '\Users\Public\'
+  sel_bits:
+    Image|endswith: '\bitsadmin.exe'
+    CommandLine|contains: '/transfer'
+  condition: 1 of sel_*
+level: high

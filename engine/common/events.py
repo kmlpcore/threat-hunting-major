@@ -170,17 +170,215 @@ class PartitionSealed(Event):
     snapshot_ids: dict[str, Any]
 
 
+# --------------------------------------------------------------------------- M5: rules and cost
+class RuleSubmitted(Event):
+    event_type: ClassVar[str] = "RuleSubmitted"
+    run_id: str
+    rule_id: str
+    rule_version_hash: str
+    title: str
+    level: str | None
+    origin: str
+    kind: str
+    tags: list[str]
+    techniques: list[str]
+    sources: list[str]
+    range_start: datetime
+    range_end: datetime
+    dry_run: bool
+    replay_of: str | None = None
+    submitted_by: str | None = None
+
+
+class RulePlanned(Event):
+    event_type: ClassVar[str] = "RulePlanned"
+    run_id: str
+    rule_id: str
+    status: str
+    tiers: list[int]
+    coverage_pct: float
+    steps: list[dict[str, Any]]
+    estimate: dict[str, Any]
+    approval_level: str
+    approval_reasons: list[str] = []
+
+
+class RunApproved(Event):
+    event_type: ClassVar[str] = "RunApproved"
+    run_id: str
+    approver: str
+    role: str
+    approvals: list[dict[str, Any]]
+    satisfied: bool
+
+
+class RunQueued(Event):
+    event_type: ClassVar[str] = "RunQueued"
+    run_id: str
+    command_id: str
+    reason: str
+
+
+class RestoreRequested(Event):
+    event_type: ClassVar[str] = "RestoreRequested"
+    run_id: str
+    files: int
+    bytes: int
+    modelled_bytes: int
+    storage_tiers: dict[str, int]
+
+
+class RuleEvaluated(Event):
+    event_type: ClassVar[str] = "RuleEvaluated"
+    run_id: str
+    rule_id: str
+    origin: str
+    status: str
+    tiers_used: list[int]
+    coverage_pct: float
+    hits: int
+    entities: int
+    bytes_scanned: int
+    bytes_restored: int
+    files_restored: int
+    full_rehydration_bytes: int
+    estimated_cost: float
+    actual_cost: float
+    currency: str
+    pricing_version: str
+    snapshot_ids: dict[str, Any]
+    duration_ms: int
+    hits_hash: str
+    techniques: list[str] = []
+    replay_of: str | None = None
+
+
+# --------------------------------------------------------------------------- M6: threat intelligence
+class BehaviorPatternRecorded(Event):
+    event_type: ClassVar[str] = "BehaviorPatternRecorded"
+    observation_id: str
+    pattern_id: str
+    title: str
+    origin: str                      # rule | llm | analyst | feed_match
+    status: str
+    techniques: list[str]
+    tactics: list[str]
+    entity_pseudonym: str | None
+    asset_class: str | None
+    business_unit: str | None
+    severity: str | None
+    confidence: int | None
+    rule_run_id: str | None
+    observed_at: datetime | None
+    threat_family: str | None = None
+    matched_indicators: int = 0
+
+
+class PatternReviewed(Event):
+    event_type: ClassVar[str] = "PatternReviewed"
+    target_id: str
+    verdict: str
+    reviewer: str
+    observations: int
+
+
+class StrategicRollupBuilt(Event):
+    event_type: ClassVar[str] = "StrategicRollupBuilt"
+    period_type: str
+    rows: int
+    periods: int
+    input_snapshot: int | None
+    tactics: list[str]
+
+
+# --------------------------------------------------------------------------- M7: TI feeds
+class IndicatorRecorded(Event):
+    event_type: ClassVar[str] = "IndicatorRecorded"
+    indicator_id: str
+    type: str
+    value: str
+    source: str
+    threat_type: str | None
+    malware_family: str | None
+    confidence: int
+    tlp: str
+    status: str
+    new: bool
+
+
+class FeedPulled(Event):
+    event_type: ClassVar[str] = "FeedPulled"
+    connector: str
+    version: str
+    generation: str
+    offline: bool
+    payloads: int
+    records: int
+    indicators_new: int
+    indicators_updated: int
+    suppressed: int
+    expired: int
+    cursor: str | None
+    sweep_run_id: str | None
+    swept: int
+    reference: dict[str, Any] = {}
+
+
+# --------------------------------------------------------------------------- M8: retention
+class RetentionApplied(Event):
+    event_type: ClassVar[str] = "RetentionApplied"
+    layer: str
+    years: int
+    cutoff: str
+    dry_run: bool
+    deleted_rows: int
+    deleted_objects: int
+    retained_by_lock: int
+    retained_by_hold: int
+    tagged_snapshots: int
+    expired_snapshots: int
+    tables: list[str]
+
+
+class TableCompacted(Event):
+    event_type: ClassVar[str] = "TableCompacted"
+    table: str
+    partitions: int
+    files_before: int
+    files_after: int
+    rows: int
+
+
+class ReadabilityChecked(Event):
+    event_type: ClassVar[str] = "ReadabilityChecked"
+    years: list[int]
+    partitions: int
+    files_read: int
+    bytes_read: int
+    archived_objects_read: int
+    failures: list[str]
+
+
+class LegalHoldChanged(Event):
+    event_type: ClassVar[str] = "LegalHoldChanged"
+    scope: str
+    on: bool
+    reason: str
+    actor: str
+    objects: int
+
+
 EVENT_TYPES: dict[str, type[Event]] = {
     cls.event_type: cls
     for cls in (CommandCompleted, CommandFailed, PingRecorded, InventoryLoaded, BatchNormalised, SummariesBuilt,
-                IndexBuilt, FeatureRegistered, ArtefactsBuilt, PartitionSealed)
+                IndexBuilt, FeatureRegistered, ArtefactsBuilt, PartitionSealed, RuleSubmitted, RulePlanned,
+                RunApproved, RunQueued, RestoreRequested, RuleEvaluated, BehaviorPatternRecorded, PatternReviewed,
+                StrategicRollupBuilt, IndicatorRecorded, FeedPulled, RetentionApplied, TableCompacted,
+                ReadabilityChecked, LegalHoldChanged)
 }
 
 # Events named in plan.md section 4.4 that later milestones will define.
-PLANNED_EVENT_TYPES = (
-    "RuleSubmitted", "RulePlanned", "RuleEvaluated", "RestoreRequested", "BehaviorPatternRecorded", "PatternReviewed",
-    "IndicatorRecorded", "FeedPulled", "StrategicRollupBuilt", "RunApproved", "RetentionApplied", "TableCompacted",
-)
+PLANNED_EVENT_TYPES: tuple[str, ...] = ()
 
 
 def export_schemas(out_dir: Path) -> list[Path]:

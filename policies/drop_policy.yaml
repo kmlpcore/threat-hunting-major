@@ -8,7 +8,9 @@
 #   high_value: conditions (ANY match) for copying the full ECS row into
 #               summary.high_value_events. Conditions are field -> list of values,
 #               or field -> {contains_any: [...]} for substring matches.
-version: "1.0.0"
+# 1.1.0: high-value matching is case-insensitive (lets the M5 coverage planner prove Tier-2
+#        coverage for Sigma rules, which compare strings case-insensitively).
+version: "1.1.0"
 
 sources:
   windows_security:
@@ -23,7 +25,7 @@ sources:
     tables: [process_daily]
     high_value:
       - process.name: [certutil.exe, rundll32.exe, mshta.exe, bitsadmin.exe, regsvr32.exe, wmic.exe,
-                       psexesvc.exe, PSEXESVC.exe, xmrig.exe, schtasks.exe, vssadmin.exe]
+                       psexesvc.exe, xmrig.exe, schtasks.exe, vssadmin.exe]
       - process.command_line: {contains_any: [" -enc", " -Enc", " -EncodedCommand", "FromBase64String",
                                               "DownloadString", "-urlcache", "stratum+tcp"]}
       - process.parent.name: [WINWORD.EXE, EXCEL.EXE, OUTLOOK.EXE, POWERPNT.EXE]

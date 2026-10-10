@@ -19,7 +19,7 @@ import sys
 import time
 import uuid
 from collections import Counter, defaultdict
-from datetime import date
+from datetime import date, datetime, timezone
 
 from engine.common.config import Settings
 from engine.common.storage import ObjectStore
@@ -179,6 +179,123 @@ def cmd_late_data(args, settings: Settings) -> dict:
                     f"watch GET /partitions/{pid}/seal or the dashboard's Sealing page"}
 
 
+def history_scenarios(year: int, path=None) -> list[dict]:
+    """Scenarios of scenarios/history.yaml active in `year` (day offset 0)."""
+    import yaml
+    from engine.common.config import REPO_ROOT
+    spec = yaml.safe_load((path or REPO_ROOT / "scenarios" / "history.yaml").read_text())["scenarios"]
+    out = []
+    for s in spec:
+        ok = True
+        if "years" in s:
+            ok = year in s["years"]
+        if "from" in s:
+            ok = ok and year >= s["from"]
+        if "to" in s:
+            ok = ok and year <= s["to"]
+        if "every" in s:
+            ok = ok and year % s["every"] == 0
+        if ok:
+            out.append({k: v for k, v in s.items() if k not in ("years", "from", "to", "every")} | {"day": 0})
+    ids = {s["id"] for s in out}
+    for s in out:                        # drop references to scenarios that are not active this year
+        for k, v in list(s.get("params", {}).items()):
+            if isinstance(v, str) and v.startswith("@") and v[1:] not in ids:
+                s["params"][k] = "auto"
+    return out
+
+
+def cmd_history(args, settings: Settings) -> dict:
+    """M8: one generated day per past year (same organisation), ingested through the normal path.
+    With the current run this gives a `--years`-year partition layout."""
+    import tempfile
+    from pathlib import Path
+
+    import yaml
+    from engine.generator.run import generate
+    store = ObjectStore.from_settings(settings)
+    anchor = date.fromisoformat(args.anchor)
+    client = make_client(args, settings)
+    out = []
+    years = [anchor.year - i for i in range(args.years - 1, 0, -1)] if not args.only else [int(y) for y in args.only]
+    for year in years:
+        scen = history_scenarios(year)
+        with tempfile.NamedTemporaryFile("w", suffix=".yaml", delete=False) as fh:
+            yaml.safe_dump({"scenarios": scen}, fh)
+        run_id = f"hist-{year}"
+        start = date(year, anchor.month, anchor.day)
+        gen = generate(settings, store, run_id=run_id, start=start, days=args.days, users=args.users,
+                       seed=args.seed + year, scenarios_file=Path(fh.name), world_seed=args.seed)
+        Path(fh.name).unlink(missing_ok=True)
+        ing = cmd_ingest(argparse.Namespace(run_id=run_id, local=args.local), settings, client)
+        out.append({"year": year, "run_id": run_id, "records": gen["records"], "scenarios": gen["scenarios"],
+                    "batches": ing["batches"], "outcome": ing["outcome"]})
+    if args.local:
+        client.rt.drain(pipeline=True)
+    return {"anchor": str(anchor), "years": out}
+
+
+def cmd_hunt(args, settings: Settings) -> dict:
+    """Submit one Sigma rule (or the whole corpus) and wait for the plan / result."""
+    from pathlib import Path
+
+    from engine.cqrs.commands import SubmitRule
+    client = make_client(args, settings)
+    files = sorted(Path(args.rule).glob("*.yml")) if Path(args.rule).is_dir() else [Path(args.rule)]
+    start = datetime.fromisoformat(args.start).replace(tzinfo=timezone.utc)
+    end = datetime.fromisoformat(args.end).replace(tzinfo=timezone.utc)
+    runs = {}
+    for f in files:
+        run_id = str(uuid.uuid4())
+        client.wait([client.submit(SubmitRule(rule_yaml=f.read_text(), start=start, end=end, run_id=run_id,
+                                              dry_run=args.dry_run, submitted_by="cli"))])
+        runs[f.stem] = run_id
+    time.sleep(0 if args.local else 2)
+    listing = {r["run_id"]: r for r in client.query("/runs?limit=2000")["items"]}
+    out = {}
+    for name, run_id in runs.items():
+        r = listing.get(run_id, {})
+        if r.get("status") == "queued" and r.get("execute_command_id"):
+            client.wait([r["execute_command_id"]])
+            r = client.query(f"/rules/{r['rule_id']}/runs/{run_id}")
+        out[name] = {k: r.get(k) for k in ("run_id", "status", "tiers", "coverage_pct", "approval_level",
+                                           "estimated_cost", "actual_cost", "hits", "bytes_restored")}
+    return out
+
+
+def cmd_approve(args, settings: Settings) -> dict:
+    from engine.cqrs.commands import ApproveRun
+    client = make_client(args, settings)
+    cid = client.submit(ApproveRun(run_id=args.run_id, approver=args.approver, role=args.role))
+    return client.wait([cid])[cid]
+
+
+def cmd_feeds(args, settings: Settings) -> dict:
+    from engine.cqrs.commands import PullFeed
+    from engine.ti.connectors.sdk import feed_config, registry
+    client = make_client(args, settings)
+    names = args.connector or [n for n in sorted(registry()) if feed_config(n).get("enabled")]
+    ids = {n: client.submit(PullFeed(connector=n)) for n in names}
+    status = client.wait(list(ids.values()))
+    if args.local:
+        client.rt.drain(pipeline=True)
+    return {n: status[c].get("detail") or status[c] for n, c in ids.items()}
+
+
+def cmd_retention(args, settings: Settings) -> dict:
+    from engine.cqrs.commands import ApplyRetention, ReadabilityDrill
+    from engine.retention.policy import load
+    client = make_client(args, settings)
+    if args.action == "drill":
+        cid = client.submit(ReadabilityDrill())
+    else:
+        layers = [args.layer] if args.layer else list(load()["layers"])
+        ids = [client.submit(ApplyRetention(layer=layer, dry_run=args.dry_run or layer == "raw" and not args.purge_raw,
+                                            as_of=args.as_of)) for layer in layers]
+        return client.wait(ids)
+    return client.wait([cid])[cid]
+
+
 def cmd_demo(args, settings: Settings) -> dict:
     client = make_client(args, settings)
     out = {"ping": cmd_ping(args, settings, client)}
@@ -209,6 +326,30 @@ def main(argv: list[str] | None = None) -> None:
     late = sub.add_parser("late-data", help="land a late record into a sealed partition (reseal demo)")
     late.add_argument("--at", default="2026-09-09T10:42:00")
     late.add_argument("--host", default="APP01")
+    hist = sub.add_parser("history", help="M8: generate + ingest one day per past year (multi-year layout)")
+    hist.add_argument("--years", type=int, default=15)
+    hist.add_argument("--anchor", default="2026-09-08", help="month/day used in every year")
+    hist.add_argument("--days", type=int, default=1)
+    hist.add_argument("--users", type=int, default=40)
+    hist.add_argument("--seed", type=int, default=42)
+    hist.add_argument("--only", nargs="*", help="generate only these years")
+    hunt = sub.add_parser("hunt", help="M5: submit a Sigma rule file (or a directory of rules)")
+    hunt.add_argument("rule")
+    hunt.add_argument("--start", default="2026-09-07")
+    hunt.add_argument("--end", default="2026-09-14")
+    hunt.add_argument("--dry-run", action="store_true")
+    appr = sub.add_parser("approve", help="M5: approve a run that is above the auto-approve cost")
+    appr.add_argument("run_id")
+    appr.add_argument("--approver", default="cli-hunter")
+    appr.add_argument("--role", default="hunter", choices=["hunter", "manager"])
+    feeds = sub.add_parser("feeds", help="M7: pull TI feeds now (default: every enabled connector)")
+    feeds.add_argument("connector", nargs="*")
+    ret = sub.add_parser("retention", help="M8: apply retention or run the readability drill")
+    ret.add_argument("action", choices=["apply", "drill"])
+    ret.add_argument("--layer")
+    ret.add_argument("--dry-run", action="store_true")
+    ret.add_argument("--purge-raw", action="store_true", help="really delete raw past retention (default: dry run)")
+    ret.add_argument("--as-of")
     demo = sub.add_parser("demo", help="ping + generate + ingest + ecs-check")
     gen_args(demo)
     demo.add_argument("--message", default="demo ping")
@@ -217,7 +358,8 @@ def main(argv: list[str] | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     settings = Settings.from_env()
     handlers = {"generate": cmd_generate, "ingest": cmd_ingest, "ping": cmd_ping, "ecs-check": cmd_ecs_check,
-                "late-data": cmd_late_data,
+                "late-data": cmd_late_data, "history": cmd_history, "hunt": cmd_hunt, "approve": cmd_approve,
+                "feeds": cmd_feeds, "retention": cmd_retention,
                 "demo": cmd_demo}
     result = handlers[args.cmd](args, settings)
     json.dump(result, sys.stdout, indent=2, default=str)

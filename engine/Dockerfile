@@ -15,6 +15,8 @@ COPY engine engine
 COPY schemas schemas
 COPY scenarios scenarios
 COPY policies policies
+COPY rules rules
+COPY data data
 COPY benchmarks benchmarks
 COPY tests tests
 

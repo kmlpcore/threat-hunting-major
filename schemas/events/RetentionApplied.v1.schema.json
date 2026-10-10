@@ -1,0 +1,69 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "layer": {
+      "title": "Layer",
+      "type": "string"
+    },
+    "years": {
+      "title": "Years",
+      "type": "integer"
+    },
+    "cutoff": {
+      "title": "Cutoff",
+      "type": "string"
+    },
+    "dry_run": {
+      "title": "Dry Run",
+      "type": "boolean"
+    },
+    "deleted_rows": {
+      "title": "Deleted Rows",
+      "type": "integer"
+    },
+    "deleted_objects": {
+      "title": "Deleted Objects",
+      "type": "integer"
+    },
+    "retained_by_lock": {
+      "title": "Retained By Lock",
+      "type": "integer"
+    },
+    "retained_by_hold": {
+      "title": "Retained By Hold",
+      "type": "integer"
+    },
+    "tagged_snapshots": {
+      "title": "Tagged Snapshots",
+      "type": "integer"
+    },
+    "expired_snapshots": {
+      "title": "Expired Snapshots",
+      "type": "integer"
+    },
+    "tables": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tables",
+      "type": "array"
+    }
+  },
+  "required": [
+    "layer",
+    "years",
+    "cutoff",
+    "dry_run",
+    "deleted_rows",
+    "deleted_objects",
+    "retained_by_lock",
+    "retained_by_hold",
+    "tagged_snapshots",
+    "expired_snapshots",
+    "tables"
+  ],
+  "title": "RetentionApplied",
+  "type": "object",
+  "x-event-type": "RetentionApplied",
+  "x-event-version": 1
+}

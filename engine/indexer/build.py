@@ -100,6 +100,42 @@ def _iter_docs(store: ObjectStore, files) -> tuple[list[dict], dict[str, dict[st
     return docs, values
 
 
+POSTINGS_TABLE = "index.keyword_postings"
+
+
+def write_postings(settings: Settings, source: str, day: str, docs: list[dict]) -> int:
+    """Keyword postings (term -> document address) as an Iceberg/Parquet table (plan.md 12.3).
+    Tantivy's on-disk format can change between major versions; this copy stays readable for
+    the whole retention period and can rebuild any index."""
+    import pyarrow as pa
+    from engine.common.catalog import ensure_table, get_catalog, replace_rows
+    from engine.indexer.backend import KEYWORD_FIELDS
+    schema = pa.schema([("field", pa.string()), ("term", pa.string()), ("raw_file", pa.string()),
+                        ("row_group", pa.int64()), ("row_offset", pa.int64()), ("event_id", pa.string()),
+                        ("ts", pa.timestamp("us", tz="UTC")), ("source", pa.string()), ("day", pa.string())])
+    cols = {n: [] for n in schema.names}
+    for d in docs:
+        row = d["row"]
+        for ecs_field in KEYWORD_FIELDS:
+            v = row.get(ecs_field)
+            for x in (v if isinstance(v, list) else [v]):
+                if x in (None, ""):
+                    continue
+                cols["field"].append(ecs_field)
+                cols["term"].append(str(x).lower())
+                cols["raw_file"].append(d["raw_file"])
+                cols["row_group"].append(d["row_group"])
+                cols["row_offset"].append(d["row_offset"])
+                cols["event_id"].append(row["event.id"])
+                cols["ts"].append(row["@timestamp"])
+                cols["source"].append(source)
+                cols["day"].append(day)
+    table = pa.table(cols, schema=schema)
+    ice = ensure_table(get_catalog(settings), POSTINGS_TABLE, schema, partition_by=("day", "source"))
+    replace_rows(ice, table, day=day, source=source)
+    return table.num_rows
+
+
 def build_index(conn: Connection, store: ObjectStore, settings: Settings, source: str, day: str,
                 generation: str, command_id: str) -> IndexBuilt:
     files = stages.day_files(conn, source, day)
@@ -134,8 +170,9 @@ def build_index(conn: Connection, store: ObjectStore, settings: Settings, source
                 "partitions": sorted({f.partition_id for f in files}), "bloom_fields": list(BLOOM_FIELDS)}
     store.put_json(f"{prefix}/manifest.json", manifest)
 
+    n_postings = write_postings(settings, source, day, docs)
     stages.record(conn, "index", f"{source}/{day}", generation, INDEX_VERSION,
-                  {"docs": n_docs, "bytes": len(packed), "blooms": blooms}, command_id)
+                  {"docs": n_docs, "bytes": len(packed), "blooms": blooms, "postings": n_postings}, command_id)
     log.info("index %s/%s: %d docs, %d bloom filters, %d bytes", source, day, n_docs, blooms, len(packed))
     return IndexBuilt(source=source, day=day, generation=generation, index_version=INDEX_VERSION, docs=n_docs,
                       index_bytes=len(packed), bloom_filters=blooms, partitions=manifest["partitions"])

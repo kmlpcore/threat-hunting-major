@@ -1,0 +1,20 @@
+# MISP-style warninglists (plan.md section 14): values that feeds sometimes list but that are
+# almost always benign (public resolvers, CDNs, big platforms, sinkholes). Matching indicators
+# are kept for audit with status `false_positive` and are never swept.
+version: "1.0.0"
+lists:
+  public-dns-resolvers:
+    type: ip
+    values: [8.8.8.8, 8.8.4.4, 1.1.1.1, 1.0.0.1, 9.9.9.9, 149.112.112.112, 208.67.222.222, 208.67.220.220]
+  private-and-reserved:
+    type: cidr
+    values: [10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, 169.254.0.0/16, 0.0.0.0/8,
+             100.64.0.0/10, 224.0.0.0/4]
+  major-platforms:
+    type: domain_suffix
+    values: [google.com, googleapis.com, gstatic.com, microsoft.com, windowsupdate.com, office.com,
+             office365.com, live.com, azure.com, apple.com, icloud.com, amazonaws.com, cloudfront.net,
+             akamaiedge.net, akamaihd.net, cloudflare.com, github.com, githubusercontent.com]
+  known-sinkholes:
+    type: ip
+    values: []

@@ -1,0 +1,154 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "observation_id": {
+      "title": "Observation Id",
+      "type": "string"
+    },
+    "pattern_id": {
+      "title": "Pattern Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "origin": {
+      "title": "Origin",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "techniques": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Techniques",
+      "type": "array"
+    },
+    "tactics": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tactics",
+      "type": "array"
+    },
+    "entity_pseudonym": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Entity Pseudonym"
+    },
+    "asset_class": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Asset Class"
+    },
+    "business_unit": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Business Unit"
+    },
+    "severity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Severity"
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Confidence"
+    },
+    "rule_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Rule Run Id"
+    },
+    "observed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Observed At"
+    },
+    "threat_family": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Threat Family"
+    },
+    "matched_indicators": {
+      "default": 0,
+      "title": "Matched Indicators",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "observation_id",
+    "pattern_id",
+    "title",
+    "origin",
+    "status",
+    "techniques",
+    "tactics",
+    "entity_pseudonym",
+    "asset_class",
+    "business_unit",
+    "severity",
+    "confidence",
+    "rule_run_id",
+    "observed_at"
+  ],
+  "title": "BehaviorPatternRecorded",
+  "type": "object",
+  "x-event-type": "BehaviorPatternRecorded",
+  "x-event-version": 1
+}

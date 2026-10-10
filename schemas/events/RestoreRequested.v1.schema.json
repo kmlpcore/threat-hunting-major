@@ -1,0 +1,39 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "files": {
+      "title": "Files",
+      "type": "integer"
+    },
+    "bytes": {
+      "title": "Bytes",
+      "type": "integer"
+    },
+    "modelled_bytes": {
+      "title": "Modelled Bytes",
+      "type": "integer"
+    },
+    "storage_tiers": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Storage Tiers",
+      "type": "object"
+    }
+  },
+  "required": [
+    "run_id",
+    "files",
+    "bytes",
+    "modelled_bytes",
+    "storage_tiers"
+  ],
+  "title": "RestoreRequested",
+  "type": "object",
+  "x-event-type": "RestoreRequested",
+  "x-event-version": 1
+}

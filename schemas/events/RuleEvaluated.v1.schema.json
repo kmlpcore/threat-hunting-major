@@ -1,0 +1,130 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "origin": {
+      "title": "Origin",
+      "type": "string"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "tiers_used": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Tiers Used",
+      "type": "array"
+    },
+    "coverage_pct": {
+      "title": "Coverage Pct",
+      "type": "number"
+    },
+    "hits": {
+      "title": "Hits",
+      "type": "integer"
+    },
+    "entities": {
+      "title": "Entities",
+      "type": "integer"
+    },
+    "bytes_scanned": {
+      "title": "Bytes Scanned",
+      "type": "integer"
+    },
+    "bytes_restored": {
+      "title": "Bytes Restored",
+      "type": "integer"
+    },
+    "files_restored": {
+      "title": "Files Restored",
+      "type": "integer"
+    },
+    "full_rehydration_bytes": {
+      "title": "Full Rehydration Bytes",
+      "type": "integer"
+    },
+    "estimated_cost": {
+      "title": "Estimated Cost",
+      "type": "number"
+    },
+    "actual_cost": {
+      "title": "Actual Cost",
+      "type": "number"
+    },
+    "currency": {
+      "title": "Currency",
+      "type": "string"
+    },
+    "pricing_version": {
+      "title": "Pricing Version",
+      "type": "string"
+    },
+    "snapshot_ids": {
+      "additionalProperties": true,
+      "title": "Snapshot Ids",
+      "type": "object"
+    },
+    "duration_ms": {
+      "title": "Duration Ms",
+      "type": "integer"
+    },
+    "hits_hash": {
+      "title": "Hits Hash",
+      "type": "string"
+    },
+    "techniques": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Techniques",
+      "type": "array"
+    },
+    "replay_of": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Replay Of"
+    }
+  },
+  "required": [
+    "run_id",
+    "rule_id",
+    "origin",
+    "status",
+    "tiers_used",
+    "coverage_pct",
+    "hits",
+    "entities",
+    "bytes_scanned",
+    "bytes_restored",
+    "files_restored",
+    "full_rehydration_bytes",
+    "estimated_cost",
+    "actual_cost",
+    "currency",
+    "pricing_version",
+    "snapshot_ids",
+    "duration_ms",
+    "hits_hash"
+  ],
+  "title": "RuleEvaluated",
+  "type": "object",
+  "x-event-type": "RuleEvaluated",
+  "x-event-version": 1
+}

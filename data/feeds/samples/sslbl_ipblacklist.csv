@@ -1,0 +1,7 @@
+################################################################
+# abuse.ch SSLBL Botnet C2 IP Blacklist (CSV)                  #
+# SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence.
+################################################################
+# Firstseen,DstIP,DstPort
+2026-10-08 06:10:00,198.51.100.160,443
+2026-10-08 07:45:00,198.51.100.161,8443

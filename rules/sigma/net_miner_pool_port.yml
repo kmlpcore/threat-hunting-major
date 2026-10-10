@@ -1,0 +1,12 @@
+title: Connection to a common mining-pool port
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a13
+description: Outbound connections to Stratum ports commonly used by cryptomining pools.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.impact, attack.t1496]
+logsource: {category: network_connection}
+detection:
+  selection:
+    DestinationPort: [3333, 5555, 7777, 14444, 45700]
+  condition: selection
+level: medium

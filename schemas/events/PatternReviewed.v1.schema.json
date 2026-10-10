@@ -1,0 +1,31 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "target_id": {
+      "title": "Target Id",
+      "type": "string"
+    },
+    "verdict": {
+      "title": "Verdict",
+      "type": "string"
+    },
+    "reviewer": {
+      "title": "Reviewer",
+      "type": "string"
+    },
+    "observations": {
+      "title": "Observations",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "target_id",
+    "verdict",
+    "reviewer",
+    "observations"
+  ],
+  "title": "PatternReviewed",
+  "type": "object",
+  "x-event-type": "PatternReviewed",
+  "x-event-version": 1
+}

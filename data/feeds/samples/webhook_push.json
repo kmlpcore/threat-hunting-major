@@ -1,0 +1,12 @@
+{
+ "_note": "SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence.",
+ "indicators": [
+  {
+   "value": "push-decoy.example",
+   "type": "domain",
+   "threat_type": "botnet_cc",
+   "confidence": 70,
+   "tlp": "TLP:GREEN"
+  }
+ ]
+}

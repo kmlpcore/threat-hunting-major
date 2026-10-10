@@ -1,0 +1,52 @@
+# Unit prices for the cost estimator (plan.md section 13). The estimator never hardcodes a
+# price: everything comes from here, and every estimate records `pricing_version`.
+#
+# Prices are modelled on AWS us-east-1 list prices as quoted in plan.md 13.3. VERIFY THEM
+# before relying on an estimate; replace with your provider/region (Azure Blob, GCS, ...).
+version: "2026-10-aws-us-east-1-v1"
+currency: USD
+provider: simulated-s3        # MinIO stands in for S3 in the prototype
+
+# The prototype holds a few tens of MB. To make estimates and approval thresholds behave like
+# a real deployment, every prototype byte stands for `scale_factor` bytes of the modelled
+# estate (100,000 x ~3.8 MB/day of raw Parquet ~= 0.4 TB/day). Estimates and actual costs
+# are reported at modelled scale; the raw (unscaled) byte counts are recorded too.
+simulation:
+  scale_factor: 100000
+
+storage_tiers:                 # $/GB-month, retrieval $/GB, requests $/1000, first-byte latency
+  hot:                 {storage: 0.023,   retrieval: 0.0,  requests_per_1000: 0.0004, latency_s: 0}
+  infrequent_access:   {storage: 0.0125,  retrieval: 0.01, requests_per_1000: 0.001,  latency_s: 0}
+  instant_archive:     {storage: 0.004,   retrieval: 0.03, requests_per_1000: 0.01,   latency_s: 0}
+  deep_archive:        {storage: 0.00099, retrieval: 0.02, requests_per_1000: 0.10,   latency_s: 43200}
+
+# Where a raw object sits. In S3 mode the object's real storage class is used (a HEAD
+# request, no restore); the prototype's lifecycle tier (a second MinIO) stands in for deep
+# archive. In local mode the tier follows partition age.
+storage_class_map: {STANDARD: hot, STANDARD_IA: infrequent_access, GLACIER_IR: instant_archive,
+                    ARCHIVE: deep_archive, GLACIER: deep_archive, DEEP_ARCHIVE: deep_archive}
+# days since partition date -> tier (first match from the top). This mirrors the prototype's
+# lifecycle (policies/lifecycle.yaml: sealed raw moves to the archive tier after 1 day).
+# Production (plan.md 12.2): [{min_days: 365, tier: deep_archive},
+#                             {min_days: 90, tier: instant_archive}, {min_days: 0, tier: hot}]
+age_tiering:
+  - {min_days: 2, tier: deep_archive}
+  - {min_days: 0, tier: hot}
+
+# Derived layers are read in place (hot / infrequent access); scanning them costs compute.
+query_engines:
+  duckdb: {price_per_gb_scanned: 0.0}    # self-hosted: compute only
+
+compute:
+  instance: m6i.xlarge
+  price_per_hour: 0.192
+  # Initial throughput model (GB of modelled data processed per compute-hour). The
+  # calibrator (engine/cost/calibrate.py) replaces these with measured values.
+  throughput_gb_per_hour: {1: 400.0, 2: 250.0, 3: 120.0}
+
+temp_storage:                  # restored copies kept hot while a run uses them
+  days: 1
+  tier: hot
+
+llm:                           # used by enrichment cost accounting (M6)
+  price_per_1k_tokens: 0.0008

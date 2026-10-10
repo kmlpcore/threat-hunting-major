@@ -1,0 +1,13 @@
+title: Member added to a privileged domain group
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a09
+description: A principal is added to an Admins group (4728 global, 4732 local security group).
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.persistence, attack.t1098, attack.privilege_escalation, attack.t1078.002]
+logsource: {product: windows, service: security}
+detection:
+  selection:
+    EventID: [4728, 4732]
+    GroupName|contains: 'Admins'
+  condition: selection
+level: high

@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "period_type": {
+      "title": "Period Type",
+      "type": "string"
+    },
+    "rows": {
+      "title": "Rows",
+      "type": "integer"
+    },
+    "periods": {
+      "title": "Periods",
+      "type": "integer"
+    },
+    "input_snapshot": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Input Snapshot"
+    },
+    "tactics": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tactics",
+      "type": "array"
+    }
+  },
+  "required": [
+    "period_type",
+    "rows",
+    "periods",
+    "input_snapshot",
+    "tactics"
+  ],
+  "title": "StrategicRollupBuilt",
+  "type": "object",
+  "x-event-type": "StrategicRollupBuilt",
+  "x-event-version": 1
+}

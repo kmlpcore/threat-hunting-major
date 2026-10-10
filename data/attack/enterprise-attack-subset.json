@@ -1,0 +1,2108 @@
+{
+ "type": "bundle",
+ "id": "bundle--32563b0f-808d-5cbb-af1b-fdff402dc70d",
+ "objects": [
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--b9213c99-4abc-5982-ae27-7e645eb243ce",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Reconnaissance",
+   "x_mitre_shortname": "reconnaissance",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0043",
+     "url": "https://attack.mitre.org/tactics/TA0043/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--e8989ef8-09fd-5e8b-9b32-1539695c6de0",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Resource Development",
+   "x_mitre_shortname": "resource-development",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0042",
+     "url": "https://attack.mitre.org/tactics/TA0042/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--01b2db60-9fff-5e1f-bd72-7bdc30200baf",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Initial Access",
+   "x_mitre_shortname": "initial-access",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0001",
+     "url": "https://attack.mitre.org/tactics/TA0001/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--0f39c895-eb75-54c6-baa0-61490e92b65c",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Execution",
+   "x_mitre_shortname": "execution",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0002",
+     "url": "https://attack.mitre.org/tactics/TA0002/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--32639bff-756f-549c-bc4c-5c447c63b2df",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Persistence",
+   "x_mitre_shortname": "persistence",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0003",
+     "url": "https://attack.mitre.org/tactics/TA0003/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--9e5f3932-5803-54c9-93cf-d95f3c369030",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Privilege Escalation",
+   "x_mitre_shortname": "privilege-escalation",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0004",
+     "url": "https://attack.mitre.org/tactics/TA0004/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--11572327-0ec5-5efe-a6d0-c6b6f8d44040",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Defense Evasion",
+   "x_mitre_shortname": "defense-evasion",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0005",
+     "url": "https://attack.mitre.org/tactics/TA0005/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--fbd008e5-fde1-5379-9725-337240bf9189",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Credential Access",
+   "x_mitre_shortname": "credential-access",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0006",
+     "url": "https://attack.mitre.org/tactics/TA0006/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--bb89486e-8da7-565c-9f73-bf9088a9c383",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Discovery",
+   "x_mitre_shortname": "discovery",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0007",
+     "url": "https://attack.mitre.org/tactics/TA0007/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--827064c6-d8cc-51a0-b941-a4773155ae76",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Lateral Movement",
+   "x_mitre_shortname": "lateral-movement",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0008",
+     "url": "https://attack.mitre.org/tactics/TA0008/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--55694268-5de2-50bb-a341-cec78ef2d7a2",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Collection",
+   "x_mitre_shortname": "collection",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0009",
+     "url": "https://attack.mitre.org/tactics/TA0009/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--7ef361e0-f11b-56e5-9d53-91489fb0aee5",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Command and Control",
+   "x_mitre_shortname": "command-and-control",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0011",
+     "url": "https://attack.mitre.org/tactics/TA0011/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--93e689ab-f890-5e85-94b8-223415418c9d",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Exfiltration",
+   "x_mitre_shortname": "exfiltration",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0010",
+     "url": "https://attack.mitre.org/tactics/TA0010/"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-tactic",
+   "spec_version": "2.1",
+   "id": "x-mitre-tactic--c20870d6-d256-53e6-b96e-4763d3505892",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Impact",
+   "x_mitre_shortname": "impact",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "TA0040",
+     "url": "https://attack.mitre.org/tactics/TA0040/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--eb4464ca-4599-5a80-8d98-bc89577369b6",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "OS Credential Dumping",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "credential-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1003",
+     "url": "https://attack.mitre.org/techniques/T1003/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--6b566e5d-bf8d-5fc0-beeb-fb044e6b44dc",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "LSASS Memory",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "credential-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1003.001",
+     "url": "https://attack.mitre.org/techniques/T1003/001/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--9cd2db3a-ddf4-57ec-9a1f-cc2bb62c1404",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Remote System Discovery",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "discovery"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1018",
+     "url": "https://attack.mitre.org/techniques/T1018/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--c8e2c5b8-bca3-5099-9512-06dbdaeaf401",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Remote Services",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "lateral-movement"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1021",
+     "url": "https://attack.mitre.org/techniques/T1021/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--3e79e732-3075-5db8-998e-2e7b74c62212",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "SMB/Windows Admin Shares",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "lateral-movement"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1021.002",
+     "url": "https://attack.mitre.org/techniques/T1021/002/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--02e84dfc-b56a-51e7-956d-7410987cfde1",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Obfuscated Files or Information",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1027",
+     "url": "https://attack.mitre.org/techniques/T1027/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--70b5e9fe-4dac-582e-a550-1771f875b2a4",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "System Owner/User Discovery",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "discovery"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1033",
+     "url": "https://attack.mitre.org/techniques/T1033/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--5f491e7f-814e-5188-84ec-ac11badbf436",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Masquerading",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1036",
+     "url": "https://attack.mitre.org/techniques/T1036/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--fc7e6494-a6a6-55b2-981b-c69e3ba22c0a",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Exfiltration Over C2 Channel",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "exfiltration"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1041",
+     "url": "https://attack.mitre.org/techniques/T1041/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--2b3b0d13-88a1-5932-af4b-a12c1c8a69be",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Network Service Discovery",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "discovery"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1046",
+     "url": "https://attack.mitre.org/techniques/T1046/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--ca545070-0916-5d9f-be5e-f11232b822b7",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Windows Management Instrumentation",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1047",
+     "url": "https://attack.mitre.org/techniques/T1047/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--65721afe-a7e3-51c6-8448-b835043cf6ab",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Exfiltration Over Alternative Protocol",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "exfiltration"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1048",
+     "url": "https://attack.mitre.org/techniques/T1048/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--14e5e17c-b7a1-5a44-a79b-86db741707ad",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Exfiltration Over Unencrypted Non-C2 Protocol",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "exfiltration"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1048.003",
+     "url": "https://attack.mitre.org/techniques/T1048/003/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--50259ad3-8bd3-5e52-b1e8-02cb2b84116a",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Scheduled Task/Job",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "privilege-escalation"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1053",
+     "url": "https://attack.mitre.org/techniques/T1053/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--a2762851-9b34-55a9-b99a-ca3ffe9b6c78",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Scheduled Task",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "privilege-escalation"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1053.005",
+     "url": "https://attack.mitre.org/techniques/T1053/005/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--697ef63d-fa88-5176-9226-fd765aa6ac8a",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Command and Scripting Interpreter",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1059",
+     "url": "https://attack.mitre.org/techniques/T1059/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--973369c0-0395-5551-8013-85d043979add",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "PowerShell",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1059.001",
+     "url": "https://attack.mitre.org/techniques/T1059/001/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--11fe098e-8110-560e-9e76-7df2df91e8a5",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Windows Command Shell",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1059.003",
+     "url": "https://attack.mitre.org/techniques/T1059/003/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--6314be5a-c413-5f72-ba98-7fb498327974",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Permission Groups Discovery",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "discovery"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1069",
+     "url": "https://attack.mitre.org/techniques/T1069/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--7903a8e3-8b83-5d3e-b761-bf760ca7beb5",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Domain Groups",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "discovery"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1069.002",
+     "url": "https://attack.mitre.org/techniques/T1069/002/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--73c79831-1869-591b-95d1-fa314361ecfb",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Indicator Removal",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1070",
+     "url": "https://attack.mitre.org/techniques/T1070/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--2e7214dd-f4fd-5663-84fe-109e3a237a2f",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Clear Windows Event Logs",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1070.001",
+     "url": "https://attack.mitre.org/techniques/T1070/001/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--f1b319ab-fd00-56fd-ad32-e323822e8632",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Application Layer Protocol",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "command-and-control"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1071",
+     "url": "https://attack.mitre.org/techniques/T1071/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--8992fe13-010f-5863-b025-6c15c07d00a7",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Web Protocols",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "command-and-control"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1071.001",
+     "url": "https://attack.mitre.org/techniques/T1071/001/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--a2862b1b-6f76-5d6b-a02a-265885775194",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "DNS",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "command-and-control"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1071.004",
+     "url": "https://attack.mitre.org/techniques/T1071/004/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--64760157-2b56-5c23-85da-a97957c89be8",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Valid Accounts",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "privilege-escalation"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "initial-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1078",
+     "url": "https://attack.mitre.org/techniques/T1078/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--6fe897de-dc69-57a3-9093-2b33c2718415",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Domain Accounts",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "privilege-escalation"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "initial-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1078.002",
+     "url": "https://attack.mitre.org/techniques/T1078/002/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--b0734c4f-271a-558e-b532-7bac094e06f7",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "System Information Discovery",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "discovery"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1082",
+     "url": "https://attack.mitre.org/techniques/T1082/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--4432ee71-1123-55bb-9c78-7cc9843d1b12",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Account Discovery",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "discovery"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1087",
+     "url": "https://attack.mitre.org/techniques/T1087/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--a43c39d9-ea23-558e-8ba9-f08beb2b2ea8",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Domain Account",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "discovery"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1087.002",
+     "url": "https://attack.mitre.org/techniques/T1087/002/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--93b0c630-70fe-5979-b2f6-cd1d011e8aaa",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Proxy",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "command-and-control"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1090",
+     "url": "https://attack.mitre.org/techniques/T1090/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--5de6e9dc-013d-5ac6-bfad-fbe4620b1eeb",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Non-Application Layer Protocol",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "command-and-control"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1095",
+     "url": "https://attack.mitre.org/techniques/T1095/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--c8f75e12-3d33-550f-9c0d-5565307c7969",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Account Manipulation",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "privilege-escalation"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1098",
+     "url": "https://attack.mitre.org/techniques/T1098/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--d6997b0a-1981-5b05-8e3e-1df1d00575d4",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Ingress Tool Transfer",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "command-and-control"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1105",
+     "url": "https://attack.mitre.org/techniques/T1105/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--1cd26f21-ed0d-5f36-8d58-3b13513afbcb",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Brute Force",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "credential-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1110",
+     "url": "https://attack.mitre.org/techniques/T1110/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--7c37cf33-ef69-55ca-abce-5e154dc208cf",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Password Guessing",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "credential-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1110.001",
+     "url": "https://attack.mitre.org/techniques/T1110/001/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--d76725db-010a-5bb0-b7cb-c37ba24775e9",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Password Spraying",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "credential-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1110.003",
+     "url": "https://attack.mitre.org/techniques/T1110/003/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--a1e07a8a-7eaf-5374-9a0e-7b185d51d407",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Modify Registry",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1112",
+     "url": "https://attack.mitre.org/techniques/T1112/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--0a9aeecf-82b1-58dd-8335-ba2b315ecff4",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Email Collection",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "collection"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1114",
+     "url": "https://attack.mitre.org/techniques/T1114/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--44614f72-963a-5665-9569-5f722c98d412",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "External Remote Services",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "initial-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1133",
+     "url": "https://attack.mitre.org/techniques/T1133/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--c2ccb223-0f19-538e-aeaf-177bf299155d",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Create Account",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1136",
+     "url": "https://attack.mitre.org/techniques/T1136/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--68efc0d0-e731-5a0f-a9f9-b38f2a4acb49",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Cloud Account",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1136.003",
+     "url": "https://attack.mitre.org/techniques/T1136/003/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--c56ac56e-001d-527f-aa87-7317fa0e0e12",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Deobfuscate/Decode Files or Information",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1140",
+     "url": "https://attack.mitre.org/techniques/T1140/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--b43fee0e-e089-5543-93c9-ec1dfe08f048",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Drive-by Compromise",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "initial-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1189",
+     "url": "https://attack.mitre.org/techniques/T1189/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--1ee933ef-fc7d-5b97-b1f1-f860406189fe",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Exploit Public-Facing Application",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "initial-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1190",
+     "url": "https://attack.mitre.org/techniques/T1190/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--a4a4b629-85ae-5a1d-9135-786e58bdaa5c",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "BITS Jobs",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    },
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "persistence"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1197",
+     "url": "https://attack.mitre.org/techniques/T1197/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--347764b3-25fe-550c-ac93-e232c2536b06",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "User Execution",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1204",
+     "url": "https://attack.mitre.org/techniques/T1204/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--1cdeafab-9385-55bb-9ec8-f76d07526f75",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Malicious File",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1204.002",
+     "url": "https://attack.mitre.org/techniques/T1204/002/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--5d13f404-12e4-5ff6-b891-e6882d081aec",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "System Binary Proxy Execution",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1218",
+     "url": "https://attack.mitre.org/techniques/T1218/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--c83a67db-5a42-5f42-9a1d-2e0ef4228c61",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Mshta",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1218.005",
+     "url": "https://attack.mitre.org/techniques/T1218/005/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--9087a2c3-9ec7-58b0-9f18-efd3a26a2d3c",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Rundll32",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1218.011",
+     "url": "https://attack.mitre.org/techniques/T1218/011/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--53d39ff6-7453-5059-82b8-0a74e757ebb4",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Data Encrypted for Impact",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "impact"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1486",
+     "url": "https://attack.mitre.org/techniques/T1486/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--ef3d4878-ac30-5dc5-8ad4-c7ebbe6e771f",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Inhibit System Recovery",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "impact"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1490",
+     "url": "https://attack.mitre.org/techniques/T1490/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--83b60c70-4106-531a-9474-f7302cd437ac",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Resource Hijacking",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "impact"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1496",
+     "url": "https://attack.mitre.org/techniques/T1496/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--37516b2e-b40f-5e60-850f-f4c38b03db72",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Data from Cloud Storage",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "collection"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1530",
+     "url": "https://attack.mitre.org/techniques/T1530/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--3768572a-2ca9-5f39-a5ad-018569f4811a",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Credentials from Password Stores",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "credential-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1555",
+     "url": "https://attack.mitre.org/techniques/T1555/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--923826db-1d87-5eef-9982-8dcbb6ed45b6",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Steal or Forge Kerberos Tickets",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "credential-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1558",
+     "url": "https://attack.mitre.org/techniques/T1558/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--e0db2ebd-cac9-5e98-8732-b33965812b8b",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Kerberoasting",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "credential-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1558.003",
+     "url": "https://attack.mitre.org/techniques/T1558/003/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--56746991-b2ad-5ffb-9d9d-df22cb4c2704",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Archive Collected Data",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "collection"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1560",
+     "url": "https://attack.mitre.org/techniques/T1560/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--426a02ef-1015-5fb6-be04-34ce7e4df7b4",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Impair Defenses",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1562",
+     "url": "https://attack.mitre.org/techniques/T1562/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--fab68e61-5520-58bd-97b5-189fabfe7e46",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Disable or Modify Cloud Logs",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "defense-evasion"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1562.008",
+     "url": "https://attack.mitre.org/techniques/T1562/008/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--f81e565b-5187-55fc-a080-494b30caf0e6",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Phishing",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "initial-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1566",
+     "url": "https://attack.mitre.org/techniques/T1566/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--649f7e59-1010-5ebc-9e09-3c94f402034f",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Spearphishing Attachment",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "initial-access"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1566.001",
+     "url": "https://attack.mitre.org/techniques/T1566/001/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--8b81861a-cf8b-5d72-8281-f54b07ff9913",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Exfiltration Over Web Service",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "exfiltration"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1567",
+     "url": "https://attack.mitre.org/techniques/T1567/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--38aefc16-4ff0-531e-ae43-2ec2662ef18e",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Exfiltration to Cloud Storage",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "exfiltration"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1567.002",
+     "url": "https://attack.mitre.org/techniques/T1567/002/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--9036d177-dc02-5652-8301-40ec26802dc9",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "System Services",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1569",
+     "url": "https://attack.mitre.org/techniques/T1569/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--9867683f-1455-52d7-8b9c-29a1027ec898",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Service Execution",
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "execution"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1569.002",
+     "url": "https://attack.mitre.org/techniques/T1569/002/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--eb16d4a1-a789-5095-a8fe-544c22e2e2b8",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Lateral Tool Transfer",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "lateral-movement"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1570",
+     "url": "https://attack.mitre.org/techniques/T1570/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--ca675127-1593-5bb0-9d9d-27686f19262b",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Non-Standard Port",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "command-and-control"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1571",
+     "url": "https://attack.mitre.org/techniques/T1571/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--35f03a82-0a0a-509a-a293-4eda92cb9f67",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Encrypted Channel",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "command-and-control"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1573",
+     "url": "https://attack.mitre.org/techniques/T1573/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--7a0f88cb-982c-58aa-b063-ddd24be97ec5",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Acquire Infrastructure",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "resource-development"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1583",
+     "url": "https://attack.mitre.org/techniques/T1583/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--f3ec6019-8d83-5fe0-afd2-febd442048d7",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Obtain Capabilities",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "resource-development"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1588",
+     "url": "https://attack.mitre.org/techniques/T1588/"
+    }
+   ]
+  },
+  {
+   "type": "attack-pattern",
+   "spec_version": "2.1",
+   "id": "attack-pattern--160a0c93-5bfe-5419-8a24-85ae081c5810",
+   "created": "2025-01-01T00:00:00.000Z",
+   "modified": "2025-01-01T00:00:00.000Z",
+   "name": "Active Scanning",
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_domains": [
+    "enterprise-attack"
+   ],
+   "kill_chain_phases": [
+    {
+     "kill_chain_name": "mitre-attack",
+     "phase_name": "reconnaissance"
+    }
+   ],
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1595",
+     "url": "https://attack.mitre.org/techniques/T1595/"
+    }
+   ]
+  }
+ ],
+ "x_note": "Subset of MITRE ATT&CK Enterprise for offline validation. Prefer the full bundle (data/attack/enterprise-attack.json); ATT&CK is (c) The MITRE Corporation."
+}

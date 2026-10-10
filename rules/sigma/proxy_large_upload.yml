@@ -1,0 +1,13 @@
+title: Large HTTP upload
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a11
+description: A single proxied POST/PUT larger than 50 MB.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.exfiltration, attack.t1048, attack.t1567.002]
+logsource: {category: proxy}
+detection:
+  selection:
+    cs-method: [POST, PUT]
+    cs-bytes|gte: 50000000
+  condition: selection
+level: medium

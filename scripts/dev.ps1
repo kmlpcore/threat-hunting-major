@@ -8,10 +8,15 @@
   .\scripts\dev.ps1 seed -RunId demo -Days 7 -Users 40
   .\scripts\dev.ps1 check
   .\scripts\dev.ps1 e2e
+  .\scripts\dev.ps1 hunt       # M5: plan + run the Sigma corpus
+  .\scripts\dev.ps1 feeds      # M7: pull TI feeds
+  .\scripts\dev.ps1 history    # M8: 15-year layout
+  .\scripts\dev.ps1 report     # M9: docs/evaluation.md
 #>
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("env", "up", "down", "clean", "ping", "generate", "ingest", "seed", "check", "status", "test", "e2e", "logs")]
+    [ValidateSet("env", "up", "down", "clean", "ping", "generate", "ingest", "seed", "check", "status", "test", "e2e", "logs",
+                 "hunt", "feeds", "history", "retention", "drill", "fidelity", "report")]
     [string]$Target = "up",
     [string]$RunId = "demo",
     [int]$Days = 7,
@@ -41,4 +46,11 @@ switch ($Target) {
     "test"     { CliPython -m pytest -q tests }
     "e2e"      { Invoke-Checked docker compose run --rm --no-deps -e E2E=1 --entrypoint python cli -m pytest -q tests/e2e }
     "logs"     { docker compose logs --tail 100 }
+    "hunt"     { Cli hunt rules/sigma }
+    "feeds"    { Cli feeds }
+    "history"  { Cli history --years 15 }
+    "retention" { Cli retention apply }
+    "drill"    { Cli retention drill }
+    "fidelity" { CliPython -m benchmarks.fidelity --run-id $RunId }
+    "report"   { CliPython -m benchmarks.report --run-id $RunId --feeds }
 }

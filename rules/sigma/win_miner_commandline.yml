@@ -1,0 +1,12 @@
+title: Cryptominer command line
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a14
+description: A process started with a stratum pool URL.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.impact, attack.t1496]
+logsource: {category: process_creation, product: windows}
+detection:
+  selection:
+    CommandLine|contains: 'stratum+tcp'
+  condition: selection
+level: high

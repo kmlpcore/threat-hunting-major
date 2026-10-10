@@ -35,9 +35,9 @@ def load_scenarios(path: Path | None) -> list[dict]:
 
 
 def generate(settings: Settings, store: ObjectStore, *, run_id: str, start: date, days: int, users: int, seed: int,
-             scenarios_file: Path | None = None) -> dict:
+             scenarios_file: Path | None = None, world_seed: int | None = None) -> dict:
     rng = random.Random(seed)
-    world = build_world(seed, users)
+    world = build_world(world_seed if world_seed is not None else seed, users)   # same org across runs
     sink = Sink(rng=random.Random(seed + 1))
     baseline = Baseline(world, sink, rng)
     baseline.run(start, days)

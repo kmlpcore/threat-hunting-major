@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "threat-hunting-engine"
-version = "0.4.0"
-description = "Artefact-based retrospective threat hunting engine (milestones M0-M4)"
+version = "0.9.0"
+description = "Artefact-based retrospective threat hunting engine (milestones M0-M9)"
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.6",
@@ -22,6 +22,7 @@ dependencies = [
     "tantivy>=0.22",
     "boto3>=1.34",
     "zstandard>=0.22",
+    "pysigma>=1.0,<2",
 ]
 
 [project.optional-dependencies]
@@ -32,7 +33,8 @@ dev = ["pytest>=8"]
 [tool.setuptools]
 package-dir = { "engine" = "." }
 packages = ["engine", "engine.common", "engine.cqrs", "engine.api", "engine.generator", "engine.normaliser",
-            "engine.summary", "engine.indexer", "engine.features", "engine.seal", "engine.orchestrator", "engine.dashboard"]
+            "engine.summary", "engine.indexer", "engine.features", "engine.seal", "engine.orchestrator", "engine.dashboard",
+            "engine.rules", "engine.cost", "engine.ti", "engine.ti.connectors", "engine.retention"]
 
 [tool.setuptools.package-data]
 "engine.dashboard" = ["static/*"]

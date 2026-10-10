@@ -1,0 +1,12 @@
+title: Download by a non-browser Windows user agent
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a17
+description: PowerShell, CryptoAPI (certutil) or BITS user agents fetching content through the proxy.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.command_and_control, attack.t1105]
+logsource: {category: proxy}
+detection:
+  selection:
+    c-useragent|contains: ['WindowsPowerShell', 'Microsoft-CryptoAPI', 'Microsoft BITS']
+  condition: selection
+level: medium

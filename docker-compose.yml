@@ -1,11 +1,13 @@
-# Prototype stack for milestones M0-M4 (plan.md section 10).
-# Later milestones add ti-enricher and ti-connectors (plan.md section 9).
+# Prototype stack for milestones M0-M9 (plan.md sections 9 and 10).
 #
 #   make up / .\scripts\dev.ps1 up      start everything and wait until healthy
 #   ... seed                              generate 7 days of logs + scenarios and ingest them;
 #                                         the orchestrator then summarises, indexes, builds
 #                                         artefacts and seals every partition on its own
 #   dashboard                             http://localhost:8080
+#   ... hunt rules/sigma                  M5: plan, estimate and run the benchmark corpus
+#   ... feeds                             M7: pull TI feeds (offline samples unless TI_FEEDS_OFFLINE=0)
+#   ... report                            M9: docs/evaluation.md
 
 x-engine: &engine
   build: { context: ., dockerfile: engine/Dockerfile }
@@ -159,7 +161,27 @@ services:
 
   writer:          # single-writer command queues (advisory lock per queue)
     <<: *engine
-    command: ["python", "-m", "engine.cqrs.runtime", "writer", "--queues", "system,meta,raw,summary,index,features,seal"]
+    command: ["python", "-m", "engine.cqrs.runtime", "writer", "--queues",
+              "system,meta,raw,summary,index,features,seal,rules,results,maintenance"]
+
+  ti-enricher:     # single writer of the ti.* tables: rule observations, LLM enrichment, feeds, rollups
+    <<: *engine
+    command: ["python", "-m", "engine.cqrs.runtime", "writer", "--queues", "ti"]
+    environment:
+      <<: *engine-env
+      # offline = deterministic local heuristic (nothing leaves the host). For Groq set
+      # LLM_PROVIDER=groq, GROQ_API_KEY and LLM_MODEL in .env (the model is never hardcoded).
+      LLM_PROVIDER: ${LLM_PROVIDER:-offline}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      TI_FEEDS_OFFLINE: ${TI_FEEDS_OFFLINE:-1}
+
+  ti-connectors:   # feed scheduler: submits PullFeed when a connector's schedule is due
+    <<: *engine
+    command: ["python", "-m", "engine.cqrs.runtime", "ti-scheduler"]
+    environment:
+      <<: *engine-env
+      TI_FEEDS_OFFLINE: ${TI_FEEDS_OFFLINE:-1}
 
   outbox-relay:
     <<: *engine
@@ -197,7 +219,12 @@ services:
       <<: *engine-env
       COMMAND_API_URL: http://command-api:8000
       QUERY_API_URL: http://query-api:8001
-    volumes: ["./benchmarks/ground_truth:/app/benchmarks/ground_truth"]
+      LLM_PROVIDER: ${LLM_PROVIDER:-offline}
+      TI_FEEDS_OFFLINE: ${TI_FEEDS_OFFLINE:-1}
+    volumes:
+      - ./benchmarks/ground_truth:/app/benchmarks/ground_truth
+      - ./benchmarks/results:/app/benchmarks/results
+      - ./docs:/app/docs
 
 volumes:
   minio-data:

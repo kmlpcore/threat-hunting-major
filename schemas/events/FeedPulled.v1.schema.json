@@ -1,0 +1,96 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "connector": {
+      "title": "Connector",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "generation": {
+      "title": "Generation",
+      "type": "string"
+    },
+    "offline": {
+      "title": "Offline",
+      "type": "boolean"
+    },
+    "payloads": {
+      "title": "Payloads",
+      "type": "integer"
+    },
+    "records": {
+      "title": "Records",
+      "type": "integer"
+    },
+    "indicators_new": {
+      "title": "Indicators New",
+      "type": "integer"
+    },
+    "indicators_updated": {
+      "title": "Indicators Updated",
+      "type": "integer"
+    },
+    "suppressed": {
+      "title": "Suppressed",
+      "type": "integer"
+    },
+    "expired": {
+      "title": "Expired",
+      "type": "integer"
+    },
+    "cursor": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Cursor"
+    },
+    "sweep_run_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Sweep Run Id"
+    },
+    "swept": {
+      "title": "Swept",
+      "type": "integer"
+    },
+    "reference": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Reference",
+      "type": "object"
+    }
+  },
+  "required": [
+    "connector",
+    "version",
+    "generation",
+    "offline",
+    "payloads",
+    "records",
+    "indicators_new",
+    "indicators_updated",
+    "suppressed",
+    "expired",
+    "cursor",
+    "sweep_run_id",
+    "swept"
+  ],
+  "title": "FeedPulled",
+  "type": "object",
+  "x-event-type": "FeedPulled",
+  "x-event-version": 1
+}

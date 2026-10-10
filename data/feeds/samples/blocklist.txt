@@ -1,0 +1,7 @@
+# Generic blocklist - SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence.
+# one indicator per line; defanged values are fine
+files-share[.]example
+203.0.113.200
+exfil-dns.example
+hxxp://files-share[.]example/upload
+192.0.2.250

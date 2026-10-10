@@ -243,6 +243,13 @@ def build_router(rt) -> APIRouter:
         return {"bucket": settings.buckets.raw, "lifecycle_rules": rule, "checked": len(checks),
                 "archived_in_sample": archived, "unsealed_in_archive_violations": violations, "sample": checks}
 
+    @r.get("/retention")
+    def retention():
+        """Retention policy per layer, data span, WORM configuration, legal holds, last drill (M8)."""
+        from engine.retention.enforcer import status
+        with rt.engine.connect() as conn:
+            return status(conn, settings, rt.store)
+
     @r.get("/catalog")
     def catalog():
         cat = get_catalog(settings)

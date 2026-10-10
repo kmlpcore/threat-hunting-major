@@ -1,0 +1,13 @@
+title: Certutil used to download a file
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a02
+description: certutil.exe with -urlcache and an http URL (ingress tool transfer through a LOLBin).
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.command_and_control, attack.t1105]
+logsource: {category: process_creation, product: windows}
+detection:
+  selection:
+    Image|endswith: '\certutil.exe'
+    CommandLine|contains|all: ['urlcache', 'http']
+  condition: selection
+level: high

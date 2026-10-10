@@ -1,0 +1,9 @@
+################################################################
+# abuse.ch URLhaus Database Dump (CSV - recent URLs)          #
+# SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence.
+################################################################
+#
+# id,dateadded,url,url_status,last_online,threat,tags,urlhaus_link,reporter
+"3300001","2026-10-08 10:01:12","http://cdn-static.badcdn.example/payload.dat","online","2026-10-09 08:00:00","malware_download","PikaBot,dll","https://urlhaus.abuse.ch/url/3300001/","synthetic"
+"3300002","2026-10-08 11:20:40","http://cdn-static.badcdn.example/x.hta","offline","2026-10-08 12:00:00","malware_download","PikaBot,hta","https://urlhaus.abuse.ch/url/3300002/","synthetic"
+"3300003","2026-10-09 02:13:09","http://files.decoy-host.example/invoice.zip","online","2026-10-09 09:00:00","malware_download","AgentTesla,zip","https://urlhaus.abuse.ch/url/3300003/","synthetic"

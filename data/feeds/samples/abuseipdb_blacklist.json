@@ -1,0 +1,20 @@
+{
+ "meta": {
+  "generatedAt": "2026-10-09T00:00:00+00:00"
+ },
+ "_note": "SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence.",
+ "data": [
+  {
+   "ipAddress": "203.0.113.66",
+   "countryCode": "ZZ",
+   "abuseConfidenceScore": 100,
+   "lastReportedAt": "2026-10-08T22:30:00+00:00"
+  },
+  {
+   "ipAddress": "198.51.100.210",
+   "countryCode": "ZZ",
+   "abuseConfidenceScore": 95,
+   "lastReportedAt": "2026-10-08T20:00:00+00:00"
+  }
+ ]
+}

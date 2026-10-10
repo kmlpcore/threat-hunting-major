@@ -1,0 +1,8 @@
+# Approval policy for rule runs (plan.md sections 3.8 and 13.2). Amounts are in `currency`
+# and compare against the *estimated* cost at modelled scale (policies/pricing.yaml).
+version: "1.0.0"
+currency: USD
+auto_approve_cost: 25          # at or below: runs immediately
+manager_approve_cost: 500      # above: a second approver with role "manager" is needed
+max_restore_bytes: 50TB        # hard safety cap on modelled bytes restored; never overridden by approval
+daily_budget: 2000             # feed retro-sweeps wait for the next day once today's spend reaches this

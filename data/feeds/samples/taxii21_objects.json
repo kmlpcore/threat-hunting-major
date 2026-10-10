@@ -1,0 +1,50 @@
+{
+ "more": false,
+ "_note": "SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence.",
+ "objects": [
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "id": "indicator--0b1d3f4e-1111-4c4c-9a9a-000000000001",
+   "created": "2026-10-08T10:00:00.000Z",
+   "modified": "2026-10-08T10:00:00.000Z",
+   "name": "Exfiltration endpoint (synthetic)",
+   "pattern": "[ipv4-addr:value = '203.0.113.200']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-08T10:00:00Z",
+   "confidence": 80,
+   "indicator_types": [
+    "malicious-activity"
+   ],
+   "labels": [
+    "exfiltration"
+   ],
+   "object_marking_refs": [
+    "marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da"
+   ]
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "id": "indicator--0b1d3f4e-1111-4c4c-9a9a-000000000002",
+   "created": "2026-10-08T10:00:00.000Z",
+   "modified": "2026-10-08T10:00:00.000Z",
+   "name": "Decoy domain",
+   "pattern": "[domain-name:value = 'taxii-decoy.example' OR url:value = 'http://taxii-decoy.example/a']",
+   "pattern_type": "stix",
+   "valid_from": "2026-10-08T10:00:00Z",
+   "confidence": 60
+  },
+  {
+   "type": "indicator",
+   "spec_version": "2.1",
+   "id": "indicator--0b1d3f4e-1111-4c4c-9a9a-000000000003",
+   "created": "2026-10-08T10:00:00.000Z",
+   "modified": "2026-10-08T10:00:00.000Z",
+   "name": "Sigma, not STIX",
+   "pattern": "title: x",
+   "pattern_type": "sigma",
+   "valid_from": "2026-10-08T10:00:00Z"
+  }
+ ]
+}

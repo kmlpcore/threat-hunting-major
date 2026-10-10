@@ -96,7 +96,7 @@ pages.overview = {
         ${kpi("Features", `${featsActive} / ${feats.items.length}`, "registered / defined")}
         ${kpi("Sealed", `${pct(t.sealed || 0, t.partitions || 0)}%`, `${fmtN(t.sealed)} of ${fmtN(t.partitions)}`, true)}
       </div>
-      <div class="card"><h2>Architecture (milestones M0–M4) <span class="hint">green = complete for every partition</span></h2>
+      <div class="card"><h2>Architecture (milestones M0–M9) <span class="hint">green = complete for every partition</span></h2>
         <div class="flow">
           <div class="step on"><b>Sources</b><span>8 native formats, 9 planted attacks</span></div>
           <div class="step on"><b>Normalise (M1)</b><span>ECS + entity resolution</span></div>
@@ -105,6 +105,13 @@ pages.overview = {
           <div class="step ${stageOn("index")}"><b>Index (M3)</b><span>bloom sidecars + BM25</span></div>
           <div class="step ${stageOn("features")}"><b>Artefacts (M4)</b><span>versioned features</span></div>
           <div class="step ${stageOn("sealed")}"><b>Seal → archive</b><span>tag-gated lifecycle</span></div>
+        </div>
+        <div class="flow" style="margin-top:8px">
+          <div class="step on"><b>Rules (M5)</b><span>Sigma → tiers · cost</span></div>
+          <div class="step on"><b>TI (M6)</b><span>tactical · operational · strategic</span></div>
+          <div class="step on"><b>Feeds (M7)</b><span>connectors → retro-sweeps</span></div>
+          <div class="step on"><b>Retention (M8)</b><span>15 years · WORM · drill</span></div>
+          <div class="step on"><b>Evaluation (M9)</b><span>docs/evaluation.md</span></div>
         </div>
       </div>
       <div class="grid g2">
@@ -391,6 +398,162 @@ pages.activity = {
       </div>
       <div class="card"><h2>Event feed</h2>${feed(act.items)}</div>`;
     $("#ping").onclick = async () => { const r = await cmd("Ping", { message: $("#pmsg").value }); toast(`Ping accepted: ${r.command_id.slice(0, 8)}…`); };
+  },
+};
+
+/* ----------------------------------------------------------------------- rules (M5) */
+const money = (v, cur = "USD") => (v == null ? "–" : `${Number(v).toFixed(Number(v) < 1 ? 4 : 2)} ${cur}`);
+const statusPill = (s) => `<span class="pill ${{ succeeded: "ok", failed: "bad", blocked: "bad", awaiting_approval: "warn", deferred_budget: "warn", queued: "info", planned: "info" }[s] || ""}">${esc(s)}</span>`;
+
+pages.rules = {
+  title: "Rules", sub: "Sigma → ECS → coverage planner: each run states its tier, coverage and estimated vs actual cost",
+  async render(el) {
+    if (!el.dataset.ready) {
+      el.dataset.ready = "1";
+      const corpus = await q("rules/corpus");
+      window._corpus = corpus.items;
+      el.innerHTML = `
+        <div class="card"><h2>Submit a Sigma rule <span class="hint">unsupported fields or modifiers are rejected at submit</span></h2>
+          <div class="row"><select id="rsel" style="flex:1">${corpus.items.map((r, i) => `<option value="${i}">${esc(r.file)}</option>`).join("")}</select>
+            <input id="rstart" value="2026-09-07" style="width:120px"><input id="rend" value="2026-09-14" style="width:120px">
+            <button class="ghost" id="rdry">Dry run (plan + estimate)</button><button id="rrun">Run</button><button class="ghost" id="rall">Run whole corpus</button></div>
+          <textarea id="ryaml" spellcheck="false" style="width:100%;height:190px;margin-top:10px" class="mono small"></textarea>
+          <div id="rmsg" class="small muted"></div></div>
+        <div class="card"><h2>Runs <span class="hint">click a run for its plan, estimate, approvals and hits</span></h2><div id="rruns"></div></div>`;
+      const fill = () => ($("#ryaml").value = window._corpus[$("#rsel").value].yaml);
+      $("#rsel").onchange = fill; fill();
+      const submit = async (yaml, dry) => {
+        const body = { rule_yaml: yaml, start: `${$("#rstart").value}T00:00:00Z`, end: `${$("#rend").value}T00:00:00Z`, dry_run: dry, submitted_by: "dashboard" };
+        return cmd("SubmitRule", body);
+      };
+      $("#rdry").onclick = async () => { try { await submit($("#ryaml").value, true); toast("Plan requested"); } catch (e) { $("#rmsg").innerHTML = `<span class="pill bad">rejected</span> ${esc(e.message)}`; } };
+      $("#rrun").onclick = async () => { try { await submit($("#ryaml").value, false); toast("Rule submitted"); } catch (e) { $("#rmsg").innerHTML = `<span class="pill bad">rejected</span> ${esc(e.message)}`; } };
+      $("#rall").onclick = async () => { for (const r of window._corpus) await submit(r.yaml, false); toast(`${window._corpus.length} rules submitted`); };
+    }
+    const runs = await q("runs", { limit: 60 });
+    const out = el.querySelector("#rruns"); if (!out) return;
+    out.innerHTML = table(runs.items.map((r) => ({ title: r.title, origin: r.origin, status: r.status, tiers: (r.tiers || []).join(","), coverage: r.coverage_pct != null ? `${r.coverage_pct}%` : "–",
+      approval: r.approval_level, estimated: money(r.estimated_cost, r.cost_currency || ""), actual: money(r.actual_cost, r.cost_currency || ""), hits: r.hits, restored_bytes: r.bytes_restored })), null, { empty: "No runs yet" });
+    out.querySelectorAll("tbody tr").forEach((tr, i) => (tr.onclick = () => showRun(runs.items[i])));
+  },
+};
+
+async function showRun(r) {
+  drawer(`<span class="spin"></span>`);
+  const run = await q(`rules/${r.rule_id}/runs/${r.run_id}`);
+  const hits = run.status === "succeeded" ? await q(`rules/${r.rule_id}/runs/${r.run_id}/hits`, { limit: 200 }) : null;
+  const est = run.estimate || {};
+  drawer(`<h3>${esc(run.title || run.rule_id)}</h3>
+    <div class="row">${statusPill(run.status)} <span class="pill">tiers ${(run.tiers || []).join(", ")}</span><span class="pill">coverage ${run.coverage_pct ?? "–"}%</span>
+      <span class="pill ${run.approval_level === "auto" ? "ok" : run.approval_level === "blocked" ? "bad" : "warn"}">approval: ${esc(run.approval_level)}</span></div>
+    <p class="small">Estimated <b>${money(run.estimated_cost, est.currency)}</b> · actual <b>${money(run.actual_cost, est.currency)}</b> · pricing ${esc(est.pricing_version || "")} · modelled scale ×${fmtN(est.scale_factor)}</p>
+    ${(est.approval_reasons || []).map((x) => `<div class="small muted">${esc(x)}</div>`).join("")}
+    <div class="row" style="margin:10px 0">
+      ${["awaiting_approval", "planned"].includes(run.status) && run.approval_level !== "blocked" ? `<button data-ap="hunter">Approve as hunter</button><button class="ghost" data-ap="manager">Approve as manager</button>` : ""}
+      ${run.status === "planned" ? `<button class="ghost" id="rexec">Execute</button>` : ""}</div>
+    <h4>Plan steps</h4><pre class="json">${esc(JSON.stringify(run.steps, null, 2))}</pre>
+    <h4>Cost lines</h4>${table((est.lines || []).map((l) => ({ item: l.item, quantity: l.quantity, unit: l.unit, cost: l.cost })))}
+    ${hits ? `<h4>Hits (${hits.count}, ${hits.entities} entity-days, snapshot ${hits.snapshot_id})</h4>${table(hits.items, ["ts", "tier", "capability", "entity_key", "event_id", "count", "evidence"])}` : ""}`);
+  document.querySelectorAll("[data-ap]").forEach((b) => (b.onclick = async () => {
+    await cmd("ApproveRun", { run_id: run.run_id, approver: `dashboard-${b.dataset.ap}`, role: b.dataset.ap }); toast("Approval recorded"); closeDrawer();
+  }));
+  const ex = $("#rexec"); if (ex) ex.onclick = async () => { await cmd("ExecuteRule", { run_id: run.run_id }); toast("Execution queued"); closeDrawer(); };
+}
+
+/* ----------------------------------------------------------------------- costs */
+pages.costs = {
+  title: "Costs", sub: "Estimated vs actual cost per run (modelled scale), and estimator accuracy after calibration",
+  async render(el) {
+    const c = await q("costs");
+    const cur = c.currency || "";
+    el.innerHTML = `
+      <div class="grid g4">
+        ${kpi("Runs", fmtN(c.runs), "succeeded")}
+        ${kpi("Estimated total", money(c.estimated_total, cur), "before execution")}
+        ${kpi("Actual total", money(c.actual_total, cur), "measured quantities, same price table", true)}
+        ${kpi("Median estimate error", c.estimate_error.median != null ? `${(c.estimate_error.median * 100).toFixed(1)}%` : "–", c.estimate_error.within_25pct != null ? `${(c.estimate_error.within_25pct * 100).toFixed(0)}% of runs within ±25%` : "")}
+      </div>
+      <div class="card"><h2>By origin</h2>${table(Object.entries(c.by_origin).map(([k, v]) => ({ origin: k, runs: v.runs, estimated: money(v.estimated, cur), actual: money(v.actual, cur) })))}</div>
+      <div class="card"><h2>Runs</h2>${table(c.items.map((x) => ({ title: x.title, origin: x.origin, tiers: (x.tiers || []).join(","), estimated: money(x.estimated_cost, cur), actual: money(x.actual_cost, cur), restored_bytes: x.bytes_restored, objects: x.files_restored, finished: fmtT(x.finished_at) })).reverse())}</div>`;
+  },
+};
+
+/* ----------------------------------------------------------------------- threat intelligence (M6) */
+pages.ti = {
+  title: "Threat intelligence", sub: "Tactical (IOCs) · operational (behaviours seen in the org) · strategic (trends), all ATT&CK-validated",
+  async render(el) {
+    const period = (el.querySelector("#tper") || {}).value || "year";
+    const [s, st, pats] = await Promise.all([q("ti/summary"), q("ti/strategic", { period, compare: "yoy" }), q("ti/patterns")]);
+    const cmp = st.comparison || [];
+    const periods = [...new Set(cmp.map((x) => x.period_start))].sort();
+    const tactics = [...new Set(cmp.map((x) => x.tactic))].sort();
+    const max = Math.max(1, ...cmp.map((x) => x.observations));
+    const cell = (p, t) => { const x = cmp.find((y) => y.period_start === p && y.tactic === t); if (!x) return `<td class="muted">·</td>`;
+      const d = x.delta_vs_same_period_last_year; return `<td class="num" style="background:rgba(91,157,255,${(0.1 + (0.6 * x.observations) / max).toFixed(2)})" title="${esc(t)} ${p}: ${x.observations} (yoy ${d >= 0 ? "+" : ""}${d})">${x.observations}</td>`; };
+    el.innerHTML = `
+      <div class="grid g4">
+        ${kpi("Indicators (tactical)", fmtN(s.tactical.indicators), `${fmtN(s.tactical.sighted)} sighted in the org`)}
+        ${kpi("Observations (operational)", fmtN(s.operational.rows), Object.entries(s.operational.by_origin).map(([k, v]) => `${k} ${v}`).join(" · "), true)}
+        ${kpi("Strategic rows", fmtN(s.strategic.rows), Object.keys(s.strategic.by_period).join(", "))}
+        ${kpi("Tactics observed", fmtN(s.strategic.tactics.length), s.strategic.tactics.slice(0, 4).join(", "))}
+      </div>
+      <div class="card"><h2>ti.strategic: observations per tactic <span class="hint"><select id="tper">${["week", "month", "quarter", "year"].map((p) => `<option ${p === period ? "selected" : ""}>${p}</option>`).join("")}</select> cell tooltip shows year-on-year delta</span></h2>
+        ${periods.length ? `<div class="scroll"><table><thead><tr><th>tactic</th>${periods.map((p) => `<th>${p}</th>`).join("")}</tr></thead><tbody>
+          ${tactics.map((t) => `<tr><td>${esc(t)}</td>${periods.map((p) => cell(p, t)).join("")}</tr>`).join("")}</tbody></table></div>` : `<div class="empty">No strategic rows yet: run rules first</div>`}</div>
+      <div class="card"><h2>Patterns (ti.operational) <span class="hint">LLM output is advisory: review moves it to validated / rejected</span></h2><div id="tpats"></div></div>`;
+    $("#tper").onchange = () => pages.ti.render(el);
+    $("#tpats").innerHTML = table(pats.items.map((p) => ({ title: p.title, origin: p.origin, techniques: p.techniques.join(", "), observations: p.observations, entities: p.entities, statuses: Object.entries(p.statuses).map(([k, v]) => `${k}:${v}`).join(" "), last_seen: fmtT(p.last_seen) })));
+    $("#tpats").querySelectorAll("tbody tr").forEach((tr, i) => (tr.onclick = () => reviewPattern(pats.items[i])));
+  },
+};
+
+function reviewPattern(p) {
+  drawer(`<h3>${esc(p.title)}</h3><p class="small muted">${esc(p.pattern_id)} · ${esc(p.origin)}${p.llm_model ? ` · ${esc(p.llm_model)}` : ""}</p>
+    <p>${p.techniques.map((t) => `<span class="pill info">${esc(t)}</span>`).join(" ")}</p>
+    <div class="row"><button data-v="validated">Validate</button><button class="ghost" data-v="rejected">Reject</button></div>`);
+  document.querySelectorAll("[data-v]").forEach((b) => (b.onclick = async () => {
+    await cmd("ReviewPattern", { target_id: p.pattern_id, verdict: b.dataset.v, reviewer: "dashboard-analyst" }); toast(`Pattern ${b.dataset.v}`); closeDrawer();
+  }));
+}
+
+/* ----------------------------------------------------------------------- feeds (M7) */
+pages.feeds = {
+  title: "TI feeds", sub: "Connector SDK: every new indicator triggers a batched, cost-estimated IOC retro-sweep over the retention window",
+  async render(el) {
+    const [f, tac] = await Promise.all([q("ti/feeds"), q("ti/tactical", { limit: 300 })]);
+    el.innerHTML = `
+      <div class="card"><h2>Connectors <span class="hint">${f.offline ? "offline mode: synthetic samples (TI_FEEDS_OFFLINE=1)" : "online"}</span></h2>
+        ${table(f.items.map((x) => ({ connector: x.connector, generation: x.generation, enabled: x.enabled ? "yes" : "no", tlp: x.tlp, pulls: x.pulls ?? 0, last_pull: fmtT(x.last_pull_at), new_last_pull: x.indicators_new, total_new: x.indicators_total_new, warninglisted: x.suppressed, sweep: x.last_sweep_run_id ? x.last_sweep_run_id.slice(0, 8) : "–" })))}
+        <div class="row" style="margin-top:10px"><select id="fsel">${f.items.map((x) => `<option>${esc(x.connector)}</option>`).join("")}</select><button id="fpull">Pull now</button>
+          <span style="flex:1"></span><input id="iv" placeholder="analyst indicator: IP, domain, URL, hash" style="width:280px"><button class="ghost" id="iadd">Record + sweep</button></div></div>
+      <div class="card"><h2>ti.tactical <span class="hint">${fmtN(tac.count)} rows · ${Object.entries(tac.by_source).map(([k, v]) => `${k} ${v}`).join(" · ")}</span></h2>
+        ${table(tac.items.map((x) => ({ type: x.type, value: x.value, source: x.source, family: x.malware_family, threat: x.threat_type, confidence: x.confidence, tlp: x.tlp, status: x.status, org_sightings: x.org_sightings, last_sighting: fmtT(x.org_last_sighting) })))}</div>`;
+    $("#fpull").onclick = async () => { await cmd("PullFeed", { connector: $("#fsel").value }); toast(`PullFeed ${$("#fsel").value} queued`); };
+    $("#iadd").onclick = async () => { await cmd("RecordIndicator", { value: $("#iv").value, analyst: "dashboard" }); toast("Indicator recorded; retro-sweep queued"); };
+  },
+};
+
+/* ----------------------------------------------------------------------- retention (M8) */
+pages.retention = {
+  title: "Retention", sub: "≥ 15 years for every layer; WORM raw, legal holds, tagged result snapshots and an annual readability drill",
+  async render(el) {
+    const r = await q("retention");
+    const years = Object.entries(r.data_years || {});
+    const maxY = Math.max(1, ...years.map(([, n]) => n));
+    const d = r.last_readability_drill;
+    el.innerHTML = `
+      <div class="grid g4">
+        ${kpi("Minimum retention", `${r.minimum_years} years`, `policy v${esc(r.policy_version)}`, true)}
+        ${kpi("Data span", r.span_years != null ? `${r.span_years.toFixed(1)} years` : "–", `oldest partition ${esc(r.oldest_partition_date || "–")}`)}
+        ${kpi("Legal holds", fmtN(r.legal_holds.length), r.legal_holds.slice(0, 2).join(", "))}
+        ${kpi("Readability drill", d ? (d.status === "ok" ? "OK" : "FAILED") : "never", d ? `${d.partitions} partitions · ${(d.years || []).length} years · ${fmtT(d.at)}` : "")}
+      </div>
+      <div class="card"><h2>Partitions per year</h2>${years.map(([y, n]) => `<div class="hbar"><div>${y}</div><div class="track"><i style="width:${(100 * n) / maxY}%;background:var(--accent)"></i></div><div class="num">${fmtN(n)}</div></div>`).join("") || `<div class="empty">No data</div>`}
+        <div class="row" style="margin-top:10px"><button id="drill">Run readability drill</button><button class="ghost" id="retdry">Retention dry run (all layers)</button></div></div>
+      <div class="card"><h2>Layers</h2>${table(Object.entries(r.layers).map(([k, v]) => ({ layer: k, years: v.years, cutoff: v.cutoff, object_lock: v.object_lock || "", last_applied: fmtT(v.last_applied), last_result: v.last_result ? `${v.last_result.deleted_rows} rows / ${v.last_result.deleted_objects} objects, ${v.last_result.tagged_snapshots} tags` : "–" })))}</div>
+      <div class="card"><h2>Raw Object Lock</h2><pre class="json">${esc(JSON.stringify(r.raw_object_lock, null, 2))}</pre></div>`;
+    $("#drill").onclick = async () => { await cmd("ReadabilityDrill", {}); toast("Readability drill queued"); };
+    $("#retdry").onclick = async () => { for (const layer of Object.keys(r.layers)) await cmd("ApplyRetention", { layer, dry_run: true }); toast("Retention dry runs queued"); };
   },
 };
 

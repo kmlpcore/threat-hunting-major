@@ -1,0 +1,55 @@
+{
+ "response": {
+  "Attribute": [
+   {
+    "id": "70001",
+    "event_id": "501",
+    "type": "ip-dst|port",
+    "category": "Network activity",
+    "to_ids": true,
+    "value": "203.0.113.66|443",
+    "timestamp": "1791500000",
+    "Tag": [
+     {
+      "name": "tlp:amber"
+     }
+    ],
+    "Event": {
+     "info": "Brute force campaign against exposed web hosts (synthetic)",
+     "Tag": [
+      {
+       "name": "misp-galaxy:threat-actor=\"SYNTHETIC SPIDER\""
+      }
+     ]
+    }
+   },
+   {
+    "id": "70002",
+    "event_id": "501",
+    "type": "domain",
+    "category": "Network activity",
+    "to_ids": true,
+    "value": "login-portal.decoy.example",
+    "timestamp": "1791500000",
+    "Tag": [
+     {
+      "name": "tlp:red"
+     }
+    ],
+    "Event": {
+     "info": "Brute force campaign against exposed web hosts (synthetic)"
+    }
+   },
+   {
+    "id": "70003",
+    "event_id": "502",
+    "type": "comment",
+    "category": "Other",
+    "to_ids": false,
+    "value": "not an indicator",
+    "timestamp": "1791500000"
+   }
+  ]
+ },
+ "_note": "SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence."
+}

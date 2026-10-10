@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "approver": {
+      "title": "Approver",
+      "type": "string"
+    },
+    "role": {
+      "title": "Role",
+      "type": "string"
+    },
+    "approvals": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Approvals",
+      "type": "array"
+    },
+    "satisfied": {
+      "title": "Satisfied",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "run_id",
+    "approver",
+    "role",
+    "approvals",
+    "satisfied"
+  ],
+  "title": "RunApproved",
+  "type": "object",
+  "x-event-type": "RunApproved",
+  "x-event-version": 1
+}

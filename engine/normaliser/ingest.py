@@ -70,9 +70,26 @@ def record_leases(conn: Connection, rows: list[dict], lease_seconds: int) -> int
     return n
 
 
+def register_mapping(conn: Connection, source: str, version: str) -> None:
+    """Keep every ECS mapping version ever used (M8): data written today must be readable with
+    the mapping it was written with, 15+ years from now."""
+    import hashlib
+    from engine.common.db import ecs_mapping_registry
+    from engine.normaliser.mapping import MAPPINGS_DIR
+    if conn.execute(select(ecs_mapping_registry.c.version).where(
+            ecs_mapping_registry.c.source == source, ecs_mapping_registry.c.version == version)).first():
+        return
+    path = MAPPINGS_DIR / f"{source}.yaml"
+    content = path.read_text() if path.exists() else ""
+    conn.execute(ecs_mapping_registry.insert().values(source=source, version=version,
+                                                      sha256=hashlib.sha256(content.encode()).hexdigest(),
+                                                      content=content, registered_at=utcnow()))
+
+
 def ingest_batch(conn: Connection, store: ObjectStore, settings: Settings, batch_id: str, batch_uri: str,
                  source: str, command_id: str) -> BatchNormalised:
     mapping = load_mapping(source)
+    register_mapping(conn, source, mapping.version)
     cat = ecs.catalog()
     records = list(store.iter_jsonl_gz(batch_uri))
 

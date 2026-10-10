@@ -1,0 +1,17 @@
+title: Any traffic involving the 203.0.113.0/24 range
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a19
+description: >
+  Broad retro-hunt over every source for a suspicious network range. CIDR matching cannot use
+  the exact-term index, so the planner restores every object in range - an expensive Tier-3
+  scan that needs approval.
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.command_and_control]
+logsource: {product: ecs}
+detection:
+  selection_src:
+    source.ip|cidr: 203.0.113.0/24
+  selection_dst:
+    destination.ip|cidr: 203.0.113.0/24
+  condition: 1 of selection_*
+level: low

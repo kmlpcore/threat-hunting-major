@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "table": {
+      "title": "Table",
+      "type": "string"
+    },
+    "partitions": {
+      "title": "Partitions",
+      "type": "integer"
+    },
+    "files_before": {
+      "title": "Files Before",
+      "type": "integer"
+    },
+    "files_after": {
+      "title": "Files After",
+      "type": "integer"
+    },
+    "rows": {
+      "title": "Rows",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "table",
+    "partitions",
+    "files_before",
+    "files_after",
+    "rows"
+  ],
+  "title": "TableCompacted",
+  "type": "object",
+  "x-event-type": "TableCompacted",
+  "x-event-version": 1
+}

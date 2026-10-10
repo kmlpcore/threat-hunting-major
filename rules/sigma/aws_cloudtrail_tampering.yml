@@ -1,0 +1,12 @@
+title: CloudTrail logging stopped or deleted
+id: 7f1c2a6e-1b3d-4d7a-9b0e-0c9a7d1e5a12
+description: StopLogging or DeleteTrail called (impair defenses).
+author: threat-hunting-engine benchmark
+status: experimental
+tags: [attack.defense_evasion, attack.t1562.008]
+logsource: {product: aws, service: cloudtrail}
+detection:
+  selection:
+    eventName: [StopLogging, DeleteTrail]
+  condition: selection
+level: high

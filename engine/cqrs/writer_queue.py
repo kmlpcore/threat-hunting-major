@@ -41,7 +41,7 @@ def submit(engine: Engine, command: Command, submitted_by: str = "cli", idempote
     try:
         with engine.begin() as conn:
             conn.execute(commands.insert().values(
-                command_id=command_id, command_type=command.command_type, queue=command.queue,
+                command_id=command_id, command_type=command.command_type, queue=command.target_queue(),
                 payload=command.model_dump(mode="json"), idempotency_key=key, status="queued", attempts=0,
                 max_attempts=max_attempts, not_before=now, submitted_by=submitted_by, submitted_at=now,
             ))
@@ -51,6 +51,22 @@ def submit(engine: Engine, command: Command, submitted_by: str = "cli", idempote
             row = conn.execute(select(commands.c.command_id, commands.c.status)
                                .where(commands.c.idempotency_key == key)).one()
         return Submitted(row.command_id, row.status, duplicate=True)
+
+
+def enqueue(conn: Connection, command: Command, submitted_by: str, max_attempts: int = 3) -> str:
+    """Queue a follow-up command inside the caller's transaction (process-manager step of a
+    handler). It commits or rolls back together with the handler's own writes and events.
+    Returns the command id (the existing one if the idempotency key was already queued)."""
+    key = command.idempotency_key()
+    existing = conn.execute(select(commands.c.command_id).where(commands.c.idempotency_key == key)).first()
+    if existing is not None:
+        return existing.command_id
+    command_id, now = str(uuid.uuid4()), utcnow()
+    conn.execute(commands.insert().values(
+        command_id=command_id, command_type=command.command_type, queue=command.target_queue(),
+        payload=command.model_dump(mode="json"), idempotency_key=key, status="queued", attempts=0,
+        max_attempts=max_attempts, not_before=now, submitted_by=submitted_by, submitted_at=now))
+    return command_id
 
 
 def requeue_failed(engine: Engine, command_types: list[str], older_than: timedelta, max_total_attempts: int) -> int:

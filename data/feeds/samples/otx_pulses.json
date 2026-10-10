@@ -1,0 +1,35 @@
+{
+ "_note": "SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence.",
+ "count": 1,
+ "next": null,
+ "results": [
+  {
+   "id": "6700000000000000000000aa",
+   "name": "DNS tunnelling infrastructure (synthetic)",
+   "TLP": "green",
+   "created": "2026-10-08T00:00:00",
+   "modified": "2026-10-08T00:00:00",
+   "tags": [
+    "dns-tunnel"
+   ],
+   "malware_families": [],
+   "attack_ids": [
+    {
+     "id": "T1071.004"
+    }
+   ],
+   "indicators": [
+    {
+     "indicator": "exfil-dns.example",
+     "type": "domain",
+     "created": "2026-10-08T00:00:00"
+    },
+    {
+     "indicator": "otx-decoy.example",
+     "type": "hostname",
+     "created": "2026-10-08T00:00:00"
+    }
+   ]
+  }
+ ]
+}

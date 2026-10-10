@@ -1,0 +1,27 @@
+[
+ {
+  "ip_address": "203.0.113.81",
+  "port": 80,
+  "status": "online",
+  "hostname": null,
+  "as_number": 64500,
+  "as_name": "DOCUMENTATION-AS",
+  "country": "ZZ",
+  "first_seen": "2026-10-07 18:00:00",
+  "last_online": "2026-10-09",
+  "malware": "PikaBot",
+  "_note": "SYNTHETIC SAMPLE - fictional values in the format of the real feed; not real threat intelligence."
+ },
+ {
+  "ip_address": "198.51.100.150",
+  "port": 443,
+  "status": "offline",
+  "hostname": null,
+  "as_number": 64501,
+  "as_name": "DOCUMENTATION-AS",
+  "country": "ZZ",
+  "first_seen": "2026-10-01 10:00:00",
+  "last_online": "2026-10-05",
+  "malware": "Emotet"
+ }
+]

@@ -1,0 +1,118 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "rule_id": {
+      "title": "Rule Id",
+      "type": "string"
+    },
+    "rule_version_hash": {
+      "title": "Rule Version Hash",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "level": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Level"
+    },
+    "origin": {
+      "title": "Origin",
+      "type": "string"
+    },
+    "kind": {
+      "title": "Kind",
+      "type": "string"
+    },
+    "tags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "techniques": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Techniques",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Sources",
+      "type": "array"
+    },
+    "range_start": {
+      "format": "date-time",
+      "title": "Range Start",
+      "type": "string"
+    },
+    "range_end": {
+      "format": "date-time",
+      "title": "Range End",
+      "type": "string"
+    },
+    "dry_run": {
+      "title": "Dry Run",
+      "type": "boolean"
+    },
+    "replay_of": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Replay Of"
+    },
+    "submitted_by": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Submitted By"
+    }
+  },
+  "required": [
+    "run_id",
+    "rule_id",
+    "rule_version_hash",
+    "title",
+    "level",
+    "origin",
+    "kind",
+    "tags",
+    "techniques",
+    "sources",
+    "range_start",
+    "range_end",
+    "dry_run"
+  ],
+  "title": "RuleSubmitted",
+  "type": "object",
+  "x-event-type": "RuleSubmitted",
+  "x-event-version": 1
+}

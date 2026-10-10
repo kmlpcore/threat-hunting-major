@@ -1,0 +1,47 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "years": {
+      "items": {
+        "type": "integer"
+      },
+      "title": "Years",
+      "type": "array"
+    },
+    "partitions": {
+      "title": "Partitions",
+      "type": "integer"
+    },
+    "files_read": {
+      "title": "Files Read",
+      "type": "integer"
+    },
+    "bytes_read": {
+      "title": "Bytes Read",
+      "type": "integer"
+    },
+    "archived_objects_read": {
+      "title": "Archived Objects Read",
+      "type": "integer"
+    },
+    "failures": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Failures",
+      "type": "array"
+    }
+  },
+  "required": [
+    "years",
+    "partitions",
+    "files_read",
+    "bytes_read",
+    "archived_objects_read",
+    "failures"
+  ],
+  "title": "ReadabilityChecked",
+  "type": "object",
+  "x-event-type": "ReadabilityChecked",
+  "x-event-version": 1
+}

@@ -1,0 +1,29 @@
+# Retention (plan.md section 12). Every layer is kept for AT LEAST 15 years. Customers or
+# regulators can raise it per tenant / layer / source; nothing may lower it below
+# `minimum_years` (the enforcer refuses such a policy).
+version: "1.0.0"
+minimum_years: 15
+layers:
+  raw:            {years: 15, object_lock: compliance}   # WORM; prototype uses GOVERNANCE/1d (RAW_LOCK_*)
+  summary:        {years: 15}
+  artefacts:      {years: 15}
+  index_keyword:  {years: 15}        # bloom sidecars + keyword postings (index.keyword_postings)
+  index_text:     {years: 15}        # BM25 segments
+  results:        {years: 15}
+  ti_tactical:    {years: 15}        # expired indicators are kept with status=expired
+  ti_operational: {years: 15}
+  ti_strategic:   {years: 15}
+  feed_raw:       {years: 15}
+overrides: []                          # e.g. {tenant: x, layer: raw, years: 20}
+
+snapshots:
+  # Ordinary Iceberg snapshots expire after this many days. Snapshots referenced by rule
+  # results (meta.snapshot_leases) are tagged and kept for the full retention period.
+  expire_after_days: 90
+  keep_min: 5
+
+readability_drill:
+  # Annual drill: read a random sample of partitions from every retained year (including a
+  # real archive restore) and fail loudly if anything cannot be read.
+  partitions_per_year: 2
+  schedule_days: 365

@@ -4,7 +4,7 @@
 **Document status:** Implementation plan v2.1 (supersedes v2.0 and the v1.0 architecture doc)
 **Date:** 2026-10-03
 
-> **Implementation status (see README.md):** M0 and M1 implemented. M2 onward not started.
+> **Implementation status (see README.md):** M0 to M9 implemented, plus the v3 modern-feed connectors. Measured results are in docs/evaluation.md.
 
 ---
 
