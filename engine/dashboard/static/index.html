@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Threat Hunting Engine</title>
   <link rel="stylesheet" href="/static/style.css">
+  <script>
+    // Apply the saved or requested theme before first paint (no dark flash in light mode).
+    (function () {
+      var t = new URLSearchParams(location.search).get("theme");
+      try { t = t || localStorage.getItem("th-theme"); } catch (e) {}
+      if (t === "light") document.documentElement.setAttribute("data-theme", "light");
+    })();
+  </script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%235b9dff'/><text x='16' y='22' font-size='16' text-anchor='middle' font-family='Arial' font-weight='800' fill='%230b1020'>TH</text></svg>">
 </head>
 <body>
@@ -42,6 +50,7 @@
       <div class="sub" id="subtitle"></div>
     </div>
     <div class="spacer"></div>
+    <button class="ghost theme-toggle" id="theme-toggle" type="button">Light mode</button>
     <div class="live"><span class="dot" id="live-dot"></span><span id="live-text">connecting…</span></div>
   </header>
 

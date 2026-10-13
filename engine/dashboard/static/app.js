@@ -17,6 +17,23 @@ const TEXT_HINTS = ["powershell enc hidden bypass", "certutil urlcache split", "
   "xmrig stratum donate", "mshta hta", "Invoice docm"];
 
 const $ = (sel, el = document) => el.querySelector(sel);
+
+// ---------- theme: dark (default) or light; printing always uses light
+const root = document.documentElement;
+const isLight = () => root.getAttribute("data-theme") === "light";
+function setTheme(light, save = true) {
+  if (light) root.setAttribute("data-theme", "light"); else root.removeAttribute("data-theme");
+  const b = document.getElementById("theme-toggle");
+  if (b) b.textContent = light ? "Dark mode" : "Light mode";
+  if (save) { try { localStorage.setItem("th-theme", light ? "light" : "dark"); } catch (e) { /* storage blocked */ } }
+}
+let themeBeforePrint = null;
+window.addEventListener("beforeprint", () => { themeBeforePrint = isLight(); setTheme(true, false); });
+window.addEventListener("afterprint", () => { if (themeBeforePrint !== null) setTheme(themeBeforePrint, false); themeBeforePrint = null; });
+document.addEventListener("DOMContentLoaded", () => {
+  setTheme(isLight(), false);
+  document.getElementById("theme-toggle").addEventListener("click", () => setTheme(!isLight()));
+});
 const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmtN = (n) => (n == null ? "–" : Number(n).toLocaleString());
 const fmtB = (b) => {
@@ -273,7 +290,7 @@ pages.storage = {
         ${kpi("All derived / raw", r.derived_to_raw != null ? `${(r.derived_to_raw * 100).toFixed(1)}%` : "–", `drop policy v${esc(s.policy_version)}`)}
       </div>
       <div class="card"><h2>Bytes by layer</h2>
-        ${bar("Native input (gzip)", s.incoming_native.bytes, "what the sources produced", "#5d6b8a")}
+        ${bar("Native input (gzip)", s.incoming_native.bytes, "what the sources produced", "var(--muted)")}
         ${bar("Raw ECS Parquet", s.raw.bytes, `${fmtN(s.raw.rows)} rows, archive-bound`, "var(--accent)")}
         ${bar("Summary tables", s.summary.bytes, `${fmtN(s.summary.rows)} rows (hot)`, "var(--ok)")}
         ${bar("Artefacts", s.artefacts.bytes, `${fmtN(s.artefacts.rows)} rows (hot)`, "var(--s-features)")}
