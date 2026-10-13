@@ -1,6 +1,6 @@
 # Evaluation report (M9)
 
-Generated 2026-10-10T09:40:50+00:00 from run `demo` (91,106 records, 7 days, 40 users, plus multi-year history). Mode: compose. Pricing `2026-10-aws-us-east-1-v1`, modelled scale x100,000.
+Generated 2026-10-13T14:56:36+00:00 from run `demo` (91,106 records, 7 days, 40 users, plus multi-year history). Mode: compose. Pricing `2026-10-aws-us-east-1-v1`, modelled scale x100,000.
 
 Produced by `python -m benchmarks.report`; every number below is measured on this deployment.
 
@@ -20,9 +20,9 @@ Produced by `python -m benchmarks.report`; every number below is measured on thi
 
 | Tier | Rules | p50 latency | p95 latency |
 |---|---|---|---|
-| 1 | 2 | 237 ms | 241 ms |
-| 2 | 12 | 245 ms | 367 ms |
-| 3 | 5 | 996 ms | 8026 ms |
+| 1 | 2 | 208 ms | 211 ms |
+| 2 | 12 | 207 ms | 306 ms |
+| 3 | 5 | 784 ms | 7291 ms |
 
 ## Per-rule fidelity
 
@@ -66,12 +66,12 @@ Storage at modelled scale (6.923 TB raw, 4.565 TB derived): **65.45/month** (raw
 Estimate accuracy (|est − actual| / actual):
 
 * uncalibrated: {"runs": 1, "mean": 0.0702, "median": 0.0702, "within_25pct": 1.0}
-* calibrated: {"runs": 137, "mean": 0.2337, "median": 0.0, "within_25pct": 0.9562}
+* calibrated: {"runs": 230, "mean": 0.1442, "median": 0.0, "within_25pct": 0.9739}
 
 ## Threat intelligence
 
-* ti.tactical: 44 indicators ({"internal": 25, "threatfox": 7, "feodo": 2, "urlhaus": 3, "csv_blocklist": 5, "malwarebazaar": 4, "sslbl": 2, "cisa_kev": 2}), 36 sighted in the org
-* ti.operational: 345 observations ({"rule": 189, "llm": 145, "feed_match": 11})
+* ti.tactical: 44 indicators ({"csv_blocklist": 5, "internal": 25, "threatfox": 7, "feodo": 2, "malwarebazaar": 4, "urlhaus": 3, "sslbl": 2, "cisa_kev": 2}), 36 sighted in the org
+* ti.operational: 346 observations ({"llm": 146, "rule": 189, "feed_match": 11})
 * ti.strategic tactics: command-and-control, credential-access, defense-evasion, discovery, execution, exfiltration, impact, initial-access, lateral-movement, persistence, privilege-escalation
 * Feed retro-sweeps: 6, cost per indicator 0.0968 USD, feed-to-sighting latency {"median": 7.1, "max": 7.9} s, max sweep restore ratio 0.9 %
 
