@@ -1,0 +1,11 @@
+stateDiagram-v2
+    direction TB
+    [*] --> Landed: IngestBatch
+    Landed --> Processed: BuildSummaries + BuildIndex
+    Processed --> FeaturesBuilt: ExtractFeatures (every active version)
+    FeaturesBuilt --> Sealed: SealPartition (all current + grace period)
+    Sealed --> Archived: lifecycle rule (tag sealed=true)
+    Sealed --> Landed: late data (new generation)
+    Archived --> Resealed: late data
+    Resealed --> Archived: seal_version + 1
+    Archived --> [*]: retention cutoff (>= 15 years)

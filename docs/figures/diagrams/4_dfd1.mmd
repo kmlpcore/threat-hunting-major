@@ -1,0 +1,27 @@
+flowchart TB
+    LS[/Log sources/] --> P1((1.0 Normalise<br/>to ECS))
+    P1 --> D1[(D1 Raw Parquet)]
+    D1 --> P2((2.0 Summarise))
+    D1 --> P3((3.0 Index<br/>Bloom + BM25))
+    P2 --> D2[(D2 Summary tables)]
+    P3 --> D3[(D3 Index store)]
+    D2 --> P4((4.0 Extract<br/>features))
+    P4 --> D4[(D4 Artefacts)]
+    P2 & P3 & P4 --> P5((5.0 Seal<br/>partition))
+    P5 --> D5[(D5 Seal manifest)]
+    P5 -->|lifecycle| D6[(D6 Raw archive WORM)]
+    TH[/Threat hunter/] -->|Sigma rule| P6((6.0 Compile<br/>and plan))
+    D11[(D11 Pricing config)] --> P6
+    P6 --> P7((7.0 Execute<br/>tiered))
+    D2 & D3 & D4 --> P7
+    D6 -->|selective restore| P7
+    P7 --> D7[(D7 Results)]
+    D7 --> P8((8.0 Enrich<br/>behaviour))
+    P8 <-->|pseudonymised bundles| LLM[/LLM provider/]
+    P8 --> D8[(D8 TI tables)]
+    D8 --> P9((9.0 Strategic<br/>roll-up)) --> D8
+    FEED[/TI feeds/] --> P11((11.0 Feed<br/>connectors)) --> D8
+    D8 -->|new IOCs| P6
+    D7 & D8 --> P10((10.0 Project<br/>read models)) --> D9[(D9 Read models)]
+    D9 --> TH
+    D9 --> CISO[/Analyst / CISO/]

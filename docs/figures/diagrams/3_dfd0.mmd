@@ -1,0 +1,8 @@
+flowchart LR
+    LS[Log sources] -->|raw security events| SYS((Retrospective<br/>Threat Hunting<br/>Engine))
+    TH[Threat hunter] -->|Sigma rules, searches,<br/>approvals, reviews| SYS
+    SYS -->|results, coverage and<br/>cost reports, estimates| TH
+    SYS -->|pseudonymised<br/>behaviour bundles| LLM[LLM provider]
+    LLM -->|ATT#amp;CK-mapped<br/>patterns JSON| SYS
+    FEED[External TI feeds] -->|IOCs, families, TTPs| SYS
+    SYS -->|strategic TI reports| CISO[Analyst / CISO]

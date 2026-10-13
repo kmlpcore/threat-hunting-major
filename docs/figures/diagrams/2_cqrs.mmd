@@ -1,0 +1,14 @@
+flowchart LR
+    subgraph Command["Command side"]
+        C1[Command API] --> CH[Command handlers]
+        CH --> W[Single-writer queues<br/>PostgreSQL advisory locks]
+        W --> ICE[(Iceberg tables<br/>+ object storage)]
+        W --> OUT[(Outbox table<br/>same transaction)]
+    end
+    OUT --> RELAY[Outbox relay] --> BUS[(Redis Streams)]
+    subgraph Query["Query side"]
+        BUS --> P[Projectors] --> RM[(Read models<br/>PostgreSQL)]
+        Q[Query API] --> RM
+        Q --> DQ[DuckDB<br/>snapshot-pinned]
+        DQ --> ICE
+    end

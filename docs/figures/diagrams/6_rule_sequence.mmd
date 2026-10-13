@@ -1,0 +1,26 @@
+sequenceDiagram
+    actor H as Threat hunter
+    participant C as Command API
+    participant RC as Sigma compiler
+    participant CP as Coverage planner
+    participant X as Executor
+    participant IX as Index (Bloom + BM25)
+    participant A as Archive
+    participant D as DuckDB
+    participant B as Event bus
+    H->>C: SubmitRule(sigma, time range)
+    C->>RC: compile (ECS pipeline)
+    RC-->>CP: fields, grain, window
+    CP-->>C: plan (tier, coverage %, est. bytes, est. cost)
+    C-->>H: plan preview (dry run)
+    H->>C: ApproveRun [if estimate above threshold]
+    C->>X: ExecuteRule
+    X->>D: Tier 1/2 SQL at pinned snapshots
+    alt Tier 3 needed
+        X->>IX: bloom prune, then anchor term lookup
+        IX-->>X: doc addresses (file, row group)
+        X->>A: restore matching row groups only
+        X->>D: evaluate predicate on restored rows
+    end
+    X->>B: RuleEvaluated (tiers, coverage, bytes, cost)
+    B-->>H: results via Query API read model
