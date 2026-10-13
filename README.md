@@ -89,7 +89,7 @@ tests. The Hive-style partition paths can go past the 260-character `MAX_PATH`.
 
 | Criterion (plan.md section 10) | Result |
 |---|---|
-| **M0** `make up` healthy | ✅ all 13 services healthy or completed; MinIO buckets with Object Lock on `raw`; Lakekeeper warehouse `threathunt` + 6 Iceberg namespaces; Postgres `meta`/`readmodel` schemas |
+| **M0** `make up` healthy | ✅ all 17 services healthy or completed (14 long-running + 3 init jobs); MinIO buckets with Object Lock on `raw`; Lakekeeper warehouse `threathunt` + 6 Iceberg namespaces; Postgres `meta`/`readmodel` schemas |
 | **M0** no-op command → event → projected read-model row | ✅ on the compose stack (Postgres → Redis Streams), and in local mode: `Ping` → `PingRecorded` + `CommandCompleted` in the outbox → bus → `readmodel.pings` / `readmodel.command_status` → `GET /pings`, `GET /commands/{id}` (`tests/integration/test_cqrs.py`, and `ping` in the local demo) |
 | **M1** 7 days × 5 sources generated | ✅ 7 days × **8** sources, 91,106 records for 40 users (seed 42), 56 batches → 766 partitions in MinIO |
 | **M1** 100 % of rows ECS-valid | ✅ 91,106 / 91,106 rows pass an independent re-validation of every landed Parquet file in MinIO (`engine.cli ecs-check`); 0 quarantined |

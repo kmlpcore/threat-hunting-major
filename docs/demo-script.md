@@ -8,7 +8,7 @@ A 12–15 minute walkthrough of the working prototype. Everything runs locally w
 ## 0. Before the audience arrives (5 min)
 
 ```powershell
-.\scripts\dev.ps1 up            # 15 services, waits until healthy
+.\scripts\dev.ps1 up            # 17 services (14 long-running + 3 init jobs), waits until healthy
 .\scripts\dev.ps1 seed          # 7 days x 40 users, 8 log sources, 9 planted attacks
 ```
 
@@ -137,7 +137,7 @@ was ≤ 5%).
 
 | Milestone | Exit criterion | Result |
 |---|---|---|
-| M0 | Stack healthy; no-op command → event → read model | ✅ 15 services; ping round trip in under 100 ms |
+| M0 | Stack healthy; no-op command → event → read model | ✅ 17 services (14 long-running + 3 init jobs); ping round trip in under 100 ms |
 | M1 | 7 days × 5 sources; 100% ECS-valid; ground truth | ✅ 8 sources, 91,106 / 91,106 valid, 1,032 labelled events all landed |
 | M2 | Summary-to-raw ratio reported; policy version on every row | ✅ 6.5%; `policy_version` 1.0.0 on every row |
 | M3 | Planted IOCs at 100% recall; BM25 top 10 contains attacks | ✅ 12/12 at 100%; 5/5 ranked #1; restore ≤ 0.55% |
@@ -153,7 +153,7 @@ M5–M9 continue in section 10 below.
 docker compose run --rm --no-deps --entrypoint python cli -m benchmarks.milestone_report   # M2 + M4
 docker compose run --rm --no-deps --entrypoint python cli -m benchmarks.index_check        # M3
 docker compose run --rm --no-deps --entrypoint python cli -m benchmarks.ground_truth_check # M1
-.\scripts\dev.ps1 test                                                                     # 29 tests
+.\scripts\dev.ps1 test                                                                     # 64 tests (+1 E2E, skipped unless E2E=1)
 ```
 
 ---
@@ -167,7 +167,7 @@ Before the audience arrives, also run `.\scripts\dev.ps1 history` (15-year layou
    reads *tier 2, high-value events, coverage 100%, auto-approved*: the planner proved that every event the rule
    can match is retained in `summary.high_value_events`. Then pick `ecs_documentation_range_traffic.yml`
    (a CIDR over every source) and run it. It has no exact index anchor, so the estimate is a full restore,
-   about 64 USD at modelled scale, and the run waits for **hunter approval**. Approve it in the drawer.
+   about 60 USD at modelled scale for the 7-day range, and the run waits for **hunter approval**. Approve it in the drawer.
 2. **Costs.** Estimated vs actual per run, with the median error after calibration (about 0%).
 3. **Threat intel (M6).** `ti.strategic` per tactic and year: 2012–2026, with the YoY delta in each cell's tooltip.
    Open a pattern: LLM output is advisory; validate or reject it.
