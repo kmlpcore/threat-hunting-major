@@ -6,6 +6,7 @@ milestones that write them (summary in M2, artefacts in M4, ...).
 from __future__ import annotations
 
 import logging
+import threading
 import time
 
 import httpx
@@ -73,11 +74,48 @@ def bootstrap_lakekeeper(settings: Settings) -> dict:
     return {"warehouse": settings.warehouse_name, "namespaces": [".".join(n) for n in catalog.list_namespaces()]}
 
 
+_S3_FS: dict[tuple, object] = {}
+_S3_FS_LOCK = threading.Lock()
+
+
+def _isolate_signed_s3_filesystems() -> None:
+    """One s3fs filesystem per table signer, created once under a lock.
+
+    PyIceberg builds an S3FileSystem per table (and per thread) and then swaps that table's
+    remote signer onto it by unregistering the old handler and registering the new one. fsspec
+    caches S3FileSystem instances by constructor arguments, which do not include the signer, so
+    every table and thread shares one client. A request sent by another thread in the gap
+    between unregister and register goes out unsigned (signing is otherwise disabled) and
+    MinIO answers AccessDenied / 403. Parallel reads of different tables hit this constantly.
+    Keying the filesystem by signer endpoint gives each table its own client whose signer is set
+    before any other thread can see it, while reads of the same table still share it."""
+    import s3fs
+    from pyiceberg.io import fsspec as pf
+    if getattr(pf, "_engine_isolated_s3", False):
+        return
+    s3fs.S3FileSystem.cachable = False          # instances are cached in _S3_FS instead
+    original = pf._s3
+
+    def s3_per_signer(properties):
+        key = (properties.get("s3.signer.endpoint"), properties.get("s3.endpoint"),
+               properties.get("s3.access-key-id"))
+        with _S3_FS_LOCK:
+            fs = _S3_FS.get(key)
+            if fs is None:
+                fs = _S3_FS[key] = original(properties)
+        return fs
+
+    for scheme in ("s3", "s3a", "s3n"):
+        pf.SCHEME_TO_FS[scheme] = s3_per_signer
+    pf._engine_isolated_s3 = True
+
+
 def load_catalog(settings: Settings):
     """Lakekeeper vends table IO with S3 *remote signing* (requests are signed by the catalog,
     which enforces access). PyIceberg implements that through fsspec/s3fs, hence the s3fs extra.
     The s3.* properties below are only used for catalog-level operations."""
     from pyiceberg.catalog.rest import RestCatalog
+    _isolate_signed_s3_filesystems()
     return RestCatalog(
         "lakekeeper",
         uri=f"{settings.lakekeeper_url.rstrip('/')}/catalog",
