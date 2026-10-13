@@ -60,7 +60,9 @@ def test_rule_hits_become_operational_observations_and_strategic_tactics(pipelin
 
 def test_offline_enrichment_records_validated_patterns_without_leaking_identifiers(pipeline, runs, client, offline):
     run = runs["win_encoded_powershell"]
-    client.wait([client.submit(EnrichBehavior(run_id=run["run_id"]))])
+    # Other rules hit the same host in the same window, so their auto-enrichments produce the same
+    # observation_id; force a fresh enrichment so this run's rows are written last.
+    client.wait([client.submit(EnrichBehavior(run_id=run["run_id"], nonce=str(uuid.uuid4())))])
     op, _ = T.read_all(pipeline.settings, T.OPERATIONAL)
     llm = [r for r in op if r["origin"] == "llm" and r["rule_run_id"] == run["run_id"]]
     assert llm and all(r["llm_provider"] == "offline" and r["prompt_version"] for r in llm)
